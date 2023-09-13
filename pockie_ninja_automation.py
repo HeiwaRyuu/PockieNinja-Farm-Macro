@@ -9,12 +9,16 @@ def relog(page):
     ## OPENING THE LOGIN SCREEN
     page.click("div[class='start-button']")
     ## ACCOUNT CREDENTIALS
-    page.type(f"input[id='username']", f"{os.getenv('USER')+os.getenv('USER_PT_2')}")
+    print("ENTERING ACCOUNT CREDENTIALS...")
+    page.type(f"input[id='username']", f"{os.getenv('USER')}")
     page.type("input[id='password']", f"{os.getenv('PASSWORD')}")
     ## LOGIN INTO ACCOUNT
     page.get_by_text("Submit").click()
+    print("LOGGED INTO ACCOUNT!")
     ## LOGIN INTO SERVER
+    print("LOGGING INTO SERVER...")
     page.get_by_text("Test Server").click()
+    print("LOGGED INTO SERVER!")
 
 
 def close_interface(page, flag_first_time):
@@ -127,7 +131,7 @@ def test_pockie_ninja(dungeon_lvl=11):
     load_dotenv()
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()## headless=False
+        browser = p.chromium.launch(headless=False)## headless=False
         print("OPENED BROWSER")
         
         ## CREATING A NEW PAGE

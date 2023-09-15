@@ -44,6 +44,9 @@ class PockieNinjaFarmBot:
                 ## CLOSING THE FIGHT PAGE IF IT IS OPEN
                 self.close_fight_page()
 
+                ## PICK CARD AFTER RESET
+                self.pick_card_after_reset()
+
                 ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
                 self.close_interface()
 
@@ -53,13 +56,14 @@ class PockieNinjaFarmBot:
                 self.count_fight += 1
                 
                 for i in range(0, self.fight_num-1):
-                    print("CANCELING SUBSEQUENT FIGHTS...")
                     print("ITERATION NUMBER: ", i+1, " OUT OF ", self.fight_num-1, " FIGHTS")
                     if self.dungeon_lvl == 11:
+                        print("ENTERED DUNGEON LVL. 11")
                         ## OPENING THE FIGHT PAGE
                         self.cancel_subsequent_fights(nth_element=self.count_fight)
                         self.count_fight += 1
                     elif self.dungeon_lvl == 16:
+                        print("ENTERED DUNGEON LVL. 16")
                         if self.count_fight < 5:
                             ## OPENING THE FIGHT PAGE
                             self.cancel_subsequent_fights(nth_element=self.count_fight)
@@ -93,6 +97,14 @@ class PockieNinjaFarmBot:
         self.page.type("input[id='password']", self.password)
         ## LOGIN INTO ACCOUNT
         self.page.get_by_text("Submit").click()
+        print("LOGGING INTO ACCOUNT...")
+        time.sleep(2)
+        ## CHECK IF TIMEOUT
+        if self.page.get_by_text("Already logged in.").count() > 0:
+            print("TIMEOUT DETECTED! RELOADING PAGE AND RELOGGING...")
+            self.page.reload()
+            self.relog()
+
         print(f"LOGGED INTO ACCOUNT {self.username}!")
         self.page.get_by_text("Test Server").click()
         print("ENTERED SERVER!")
@@ -125,6 +137,16 @@ class PockieNinjaFarmBot:
                 self.page.get_by_text("Leave").click()
 
     
+    def pick_card_after_reset(self):
+        print("PICKING LEFTOVER CARDS (OBS: LEFT FROM PREVIOUS SESSION)")
+        time.sleep(2)
+        if self.page.locator(f"img[{CARD_IMG_SRC}]").count() > 0:
+            self.page.locator(f"img[{CARD_IMG_SRC}]").nth(-1).click()
+            time.sleep(2)
+            if self.page.get_by_text("Collect").count() > 0:
+                self.page.get_by_text("Collect").click()
+
+    
     def close_interface(self):
         print("CLOSING INTERFACE (CHAT, SETTINGS AND FRIENDS LIST)...")
         if self.flag_first_time:
@@ -150,7 +172,7 @@ class PockieNinjaFarmBot:
             
         self.page.mouse.click(castle["x"] + castle["width"]/2, j)
 
-    
+
     def cancel_first_fight(self):
         print("CANCELLING FIRST FIGHT...")
         ## CLICKING INTO VALLHALLA DECANDENT NEST LVL. 11 --> I HAVE TO BRUSH THE WHOLE AREA TO FIND THE IMAGE (HOVER OVER IT)
@@ -176,21 +198,54 @@ class PockieNinjaFarmBot:
 
 
     def cancel_subsequent_fights(self, nth_element):
+        print("CANCELLING SUBSEQUENT FIGHTS...")
+        max_tries = 20
+        try_count = 0
+
+        print("WAITING FOR THE INSTANCE TO APPEAR...")
+        while (try_count < max_tries):
+            print("TRY NUMBER: ", try_count+1, " OUT OF ", max_tries)
+            if (self.page.locator(f"img[{self.battle_select_instance}]").count() > 0) and (self.page.locator(f"canvas[width='1000']").count() == 0):
+                break
+            if try_count == 0:
+                time.sleep(15)
+            ## REFRESH PAGE AND RELOG
+            self.page.reload()
+            self.relog()
+            time.sleep(2)
+            try_count += 1
+
         ## SELECTING INSTANCE
         self.page.click(f"img[{self.battle_select_instance}]")
-
+ 
+        print("ENTERING BATTLE...") 
         ## ENTERING BATTLE
         nth_instance = self.page.locator(f"img[{self.battle_icon}]")
         nth_instance.nth(nth_element).click()
 
+        print("REFRESHING PAGE...")
         ## REFRESH PAGE
         self.page.reload()
 
+        print("RELOGGING...")
         ## RELOG
         self.relog()
 
     
     def click_card(self):
+        max_tries = 30
+        try_count = 0
+
+        print("WAITING FOR THE CARD TO APPEAR...")
+        while (try_count < max_tries):
+            if (self.page.locator(f"img[{CARD_IMG_SRC}]").count() > 0) and (self.page.locator(f"canvas[width='1000']").count() == 0):
+                break
+            ## REFRESH PAGE AND RELOG
+            self.page.reload()
+            self.relog()
+            time.sleep(3)
+            try_count += 1
+
         print("CLICKING ON THE CARD...")
         card_element = self.page.locator(f"img[{CARD_IMG_SRC}]")
         card_element.nth(-1).click()

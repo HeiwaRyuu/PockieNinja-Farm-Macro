@@ -168,10 +168,17 @@ class ValhallaFarm(tk.Frame):
                 return
             
             messagebox.showinfo("Info", "Valid Credentials!\nStarting Bot!")
-            bot = PockieNinjaValhallaBot(username, password, int(dungeon_lvl), headless=headless)
-            self.bots.append(bot)
-            bot.main_loop()
-            
+            check_exit_success = self.create_and_run_bot(username, password, dungeon_lvl, headless)
+            while not check_exit_success:
+                check_exit_success = self.create_and_run_bot(username, password, dungeon_lvl, headless)
+    
+
+    def create_and_run_bot(self, username, password, dungeon_lvl, headless):
+        bot = PockieNinjaValhallaBot(username, password, int(dungeon_lvl), headless=headless)
+        self.bots.append(bot)
+        check_exit_success = bot.main_loop()
+        return check_exit_success
+    
     
     def stop_bot(self):
         if self.bots:
@@ -284,9 +291,16 @@ class SmeltingMountains(tk.Frame):
                 return
             
             messagebox.showinfo("Info", "Valid Credentials!\nStarting Bot!")
-            bot = PockieNinjaSmeltingMountainsBot(username, password, mob_name, headless=headless)
-            self.bots.append(bot)
-            bot.main_loop()
+            check_exit_success = self.create_and_run_bot(username, password, mob_name, headless)
+            while not check_exit_success:
+                check_exit_success = self.create_and_run_bot(username, password, mob_name, headless)
+
+
+    def create_and_run_bot(self, username, password, mob_name, headless):
+        bot = PockieNinjaSmeltingMountainsBot(username, password, mob_name, headless=headless)
+        self.bots.append(bot)
+        check_exit_success = bot.main_loop()
+        return check_exit_success
 
     
     def stop_bot(self):

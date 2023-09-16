@@ -1,4 +1,4 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError
 import time
 from src import *
 
@@ -82,52 +82,61 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
 
     def main_loop(self):
-        with sync_playwright() as self.p:
-            self.browser = self.p.chromium.launch(headless=self.headless)
-            print("OPENED BROWSER")
-            
-            ## CREATING A NEW PAGE
-            self.page = self.browser.new_page()
+        try:
+            with sync_playwright() as self.p:
+                self.browser = self.p.chromium.launch(headless=self.headless)
+                print("OPENED BROWSER")
+                
+                ## CREATING A NEW PAGE
+                self.page = self.browser.new_page()
 
-            ## ENTERING WEBSITE
-            self.page.goto("https://pockieninja.online/")
-            print("OPENED LINK")
+                ## ENTERING WEBSITE
+                self.page.goto("https://pockieninja.online/")
+                print("OPENED LINK")
 
-            ## RELOG
-            self.relog()
-        
-            while(not self.flag_quit):
                 ## SET DUNGEON INFO
                 self.set_dungeon_info()
 
-                ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
-                self.close_interface()
+                ## RELOG
+                self.relog()
+            
+                while(not self.flag_quit):
+                    ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
+                    self.close_interface()
 
-                ## CLOSING THE FIGHT PAGE IF IT IS OPEN
-                self.close_fight_page()
+                    ## CLOSING THE FIGHT PAGE IF IT IS OPEN
+                    self.close_fight_page()
 
-                ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
-                self.check_if_on_valhalla_camp()
+                    ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
+                    self.check_if_on_valhalla_camp()
 
-                ## PICK CARD AFTER RESET
-                self.pick_card_after_reset()
+                    ## PICK CARD AFTER RESET
+                    self.pick_card_after_reset()
 
-                time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+                    time.sleep(WINDOW_WAIT_STANDARD_DELAY)
 
-                self.start_farm()
-                
+                    self.start_farm()
+                    
 
-                if self.count_fight==self.fight_num:
-                    ## CLICK ON THE CARD GET REWARD AND RESTART MACRO
-                    self.click_card()
-                    self.count_fight = 0
-                    ## RELOAD
-                    self.page.reload()
-                    ## RELOG
-                    self.relog()
-                    print("RESTARTING MACRO...")
-        
-        print("QUITTING...")
+                    if self.count_fight==self.fight_num:
+                        ## CLICK ON THE CARD GET REWARD AND RESTART MACRO
+                        self.click_card()
+                        self.count_fight = 0
+                        ## RELOAD
+                        self.page.reload()
+                        ## RELOG
+                        self.relog()
+                        print("RESTARTING MACRO...")
+            
+            print("QUITTING...")
+            return True
+        except (Exception) as e:
+            print("EXCEPTION: ", e)
+            if "Timeout" in str(e):
+                print("TimeoutError")
+                return False
+            else:
+                return True
 
     
     def set_dungeon_info(self):
@@ -316,40 +325,54 @@ class PockieNinjaSmeltingMountainsBot(PockieNinjaFarmBot):
 
 
     def main_loop(self):
-        with sync_playwright() as self.p:
-            self.browser = self.p.chromium.launch(headless=self.headless)
-            print("OPENED BROWSER")
-            
-            ## CREATING A NEW PAGE
-            self.page = self.browser.new_page()
-
-            ## ENTERING WEBSITE
-            self.page.goto("https://pockieninja.online/")
-            print("OPENED LINK")
-
-            ## RELOG
-            self.relog()
-
-            ## SET DUNGEON INFO
-            self.set_farm_info()
-
-            ## CLOSING THE FIGHT PAGE IF IT IS OPEN
-            self.close_fight_page()
-
-            ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
-            self.close_interface()
-
-            ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
-            self.check_if_on_smelting_mountais_camp()
-            
-            while(not self.flag_quit):
-                time.sleep(WINDOW_WAIT_STANDARD_DELAY)
-
-                self.start_farm()
+        try:
+            with sync_playwright() as self.p:
+                self.browser = self.p.chromium.launch(headless=self.headless)
+                print("OPENED BROWSER")
                 
-                print("RESTARTING MACRO...")
-        
-        print("QUITTING...")
+                ## CREATING A NEW PAGE
+                self.page = self.browser.new_page()
+
+                ## ENTERING WEBSITE
+                self.page.goto("https://pockieninja.online/")
+                print("OPENED LINK")
+
+                ## RELOG
+                self.relog()
+
+                ## SET DUNGEON INFO
+                self.set_farm_info()
+
+                ## CLOSING THE FIGHT PAGE IF IT IS OPEN
+                self.close_fight_page()
+
+                ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
+                self.close_interface()
+
+                ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
+                self.check_if_on_smelting_mountais_camp()
+                
+
+                while(not self.flag_quit):
+                    time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+
+                    self.start_farm()
+
+                    self.count_fight += 1
+
+                    print(f"FIGHT NUMBER: {self.count_fight}")
+                    
+                    print("RESTARTING MACRO...")
+
+            print("QUITTING...")
+            return True
+        except (Exception) as e:
+            print("EXCEPTION: ", e)
+            if "Timeout" in str(e):
+                print("TimeoutError")
+                return False
+            else:
+                return True
 
 
     def check_if_on_smelting_mountais_camp(self):

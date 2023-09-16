@@ -79,7 +79,12 @@ class Application(tk.Frame):
         if username == "" or password == "" or dungeon_lvl == "":
             messagebox.showwarning("Warning", "Please fill all the fields")
         else:
-            messagebox.showinfo("Info", "Starting Bot!")
+            messagebox.showinfo("Info", "Checking Your Credentials...\nPlease wait for a moment!")
+            check_credentials_bot = CheckLoginCredentials(username, password)
+            if check_credentials_bot.check_credentials():
+                messagebox.showwarning("Warning", "Invalid Credentials!\nCheck Username and Password!")
+                return
+            messagebox.showinfo("Info", "Valid Credentials!\nStarting Bot!")
             bot = PockieNinjaFarmBot(int(dungeon_lvl), username, password, headless=headless)
             self.bots.append(bot)
             bot.main_loop()

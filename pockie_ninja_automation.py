@@ -6,9 +6,66 @@ from src import *
 WINDOW_WAIT_STANDARD_DELAY = 2
 ADDITIONAL_SLEEP_TIME = 2
 
-
 class PockieNinjaFarmBot:
-    def __init__(self, dungeon_lvl, username, password, headless):
+    def relog(self):
+        ## OPENING THE LOGIN SCREEN
+        self.page.click("div[class='start-button']")
+        ## ACCOUNT CREDENTIALS
+        self.page.type(f"input[id='username']", self.username)
+        self.page.type("input[id='password']", self.password)
+        ## LOGIN INTO ACCOUNT
+        self.page.get_by_text("Submit").click()
+        print("LOGGING INTO ACCOUNT...")
+        time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+        ## CHECK IF TIMEOUT
+        if self.page.get_by_text("Already logged in.").count() > 0:
+            print("TIMEOUT DETECTED! RELOADING PAGE AND RELOGGING...")
+            self.page.reload()
+            self.relog()
+
+        print(f"LOGGED INTO ACCOUNT {self.username}!")
+        self.page.get_by_text("Test Server").click()
+        print("ENTERED SERVER!")
+
+    
+    def close_interface(self):
+        print("CLOSING INTERFACE (CHAT, SETTINGS AND FRIENDS LIST)...")
+        time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+        if self.flag_first_time:
+            ## CLOSING CHAT
+            if self.page.locator(f"img[{CHAT_MINIMIZE_BUTTON}]").count() > 0:
+                print("CLOSING CHAT...")
+                self.page.click(f"img[{CHAT_MINIMIZE_BUTTON}]")
+
+            ## CLOSING SETTINGS
+            if self.page.locator(f"img[{SETTINGS_CLOSE_BUTTON}]").count() > 0:
+                print("CLOSING SETTINGS...")
+                self.page.click(f"img[{SETTINGS_CLOSE_BUTTON}]")
+
+            ## CLOSING FIRNEDS LIST
+            if self.page.locator(f"img[{FRIENDS_LIST_MINIZE_BTN}]").count() > 0:
+                print("CLOSING FRIENDS LIST...")
+                self.page.click(f"img[{FRIENDS_LIST_MINIZE_BTN}]")
+
+            self.flag_first_time = False
+        
+        print("INTERFACES CLOSED!")
+
+    
+    def close_fight_page(self):
+        time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+        if self.page.get_by_text("Abandon").count() > 0:
+            print("CLOSING FIGHT PAGE (OBS: IT WAS OPEN BEFORE FROM PREVIOUS SESSION)")
+            self.page.get_by_text("Abandon").click()
+            time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+            if self.page.get_by_text("Leave").count() > 0:
+                self.page.get_by_text("Leave").click()
+
+
+################################################################################################################################
+################################################################################################################################
+class PockieNinjaValhallaBot(PockieNinjaFarmBot):
+    def __init__(self, username, password, dungeon_lvl, headless):
         self.dungeon_lvl = dungeon_lvl
         self.username = username
         self.password = password
@@ -55,31 +112,9 @@ class PockieNinjaFarmBot:
                 ## PICK CARD AFTER RESET
                 self.pick_card_after_reset()
 
-
                 time.sleep(WINDOW_WAIT_STANDARD_DELAY)
 
-                self.cancel_first_fight()
-                self.count_fight += 1
-                
-                for i in range(0, self.fight_num-1):
-                    print("ITERATION NUMBER: ", i+1, " OUT OF ", self.fight_num-1, " FIGHTS")
-                    if self.dungeon_lvl == 11:
-                        print("ENTERED DUNGEON LVL. 11")
-                        ## OPENING THE FIGHT PAGE
-                        self.cancel_subsequent_fights(nth_element=self.count_fight)
-                        self.count_fight += 1
-                    elif self.dungeon_lvl == 16:
-                        print("ENTERED DUNGEON LVL. 16")
-                        if self.count_fight < 5:
-                            ## OPENING THE FIGHT PAGE
-                            self.cancel_subsequent_fights(nth_element=self.count_fight)
-                            self.count_fight += 1
-                        else:
-                            self.battle_select_instance = VALHALLA_CAMP_PANTHEON_ENTRANCE_BATTLE_INSTANCE_SRC
-                            ## OPENING THE FIGHT PAGE
-                            self.cancel_subsequent_fights(nth_element=self.count_fight-(self.fight_num/2))
-                            self.count_fight += 1
-                print("ALL FIGHTS DONE!")
+                self.start_farm()
                 
 
                 if self.count_fight==self.fight_num:
@@ -94,28 +129,7 @@ class PockieNinjaFarmBot:
         
         print("QUITTING...")
 
-
-    def relog(self):
-        ## OPENING THE LOGIN SCREEN
-        self.page.click("div[class='start-button']")
-        ## ACCOUNT CREDENTIALS
-        self.page.type(f"input[id='username']", self.username)
-        self.page.type("input[id='password']", self.password)
-        ## LOGIN INTO ACCOUNT
-        self.page.get_by_text("Submit").click()
-        print("LOGGING INTO ACCOUNT...")
-        time.sleep(WINDOW_WAIT_STANDARD_DELAY)
-        ## CHECK IF TIMEOUT
-        if self.page.get_by_text("Already logged in.").count() > 0:
-            print("TIMEOUT DETECTED! RELOADING PAGE AND RELOGGING...")
-            self.page.reload()
-            self.relog()
-
-        print(f"LOGGED INTO ACCOUNT {self.username}!")
-        self.page.get_by_text("Test Server").click()
-        print("ENTERED SERVER!")
-
-
+    
     def set_dungeon_info(self):
         if self.dungeon_lvl == 11:
             self.fight_num = DECADENT_NEST_FIGHT_NUM
@@ -146,7 +160,8 @@ class PockieNinjaFarmBot:
 
             self.page.mouse.click(map_canva_box["x"] + map_canva_box["width"]/2, i)
 
-            
+
+            time.sleep(WINDOW_WAIT_STANDARD_DELAY)
             valhalla_encampment = self.page.locator(f"img[{VALLHALLA_ENCAMPMENT}]").bounding_box()
             i = 0
             for i in range(int(round(valhalla_encampment["y"])), int(round(valhalla_encampment["y"] + valhalla_encampment["height"]/2)), 2):
@@ -155,16 +170,6 @@ class PockieNinjaFarmBot:
             print("ENTERING VALHALLA...")
             self.page.mouse.click(valhalla_encampment["x"] + valhalla_encampment["width"]/2, i)
             self.page.get_by_text("Enter Valhalla").click()
-
-
-    def close_fight_page(self):
-        time.sleep(WINDOW_WAIT_STANDARD_DELAY)
-        if self.page.get_by_text("Abandon").count() > 0:
-            print("CLOSING FIGHT PAGE (OBS: IT WAS OPEN BEFORE FROM PREVIOUS SESSION)")
-            self.page.get_by_text("Abandon").click()
-            time.sleep(WINDOW_WAIT_STANDARD_DELAY)
-            if self.page.get_by_text("Leave").count() > 0:
-                self.page.get_by_text("Leave").click()
 
     
     def pick_card_after_reset(self):
@@ -177,30 +182,6 @@ class PockieNinjaFarmBot:
                 self.page.get_by_text("Collect").click()
 
     
-    def close_interface(self):
-        print("CLOSING INTERFACE (CHAT, SETTINGS AND FRIENDS LIST)...")
-        time.sleep(WINDOW_WAIT_STANDARD_DELAY)
-        if self.flag_first_time:
-            ## CLOSING CHAT
-            if self.page.locator(f"img[{CHAT_MINIMIZE_BUTTON}]").count() > 0:
-                print("CLOSING CHAT...")
-                self.page.click(f"img[{CHAT_MINIMIZE_BUTTON}]")
-
-            ## CLOSING SETTINGS
-            if self.page.locator(f"img[{SETTINGS_CLOSE_BUTTON}]").count() > 0:
-                print("CLOSING SETTINGS...")
-                self.page.click(f"img[{SETTINGS_CLOSE_BUTTON}]")
-
-            ## CLOSING FIRNEDS LIST
-            if self.page.locator(f"img[{FRIENDS_LIST_MINIZE_BTN}]").count() > 0:
-                print("CLOSING FRIENDS LIST...")
-                self.page.click(f"img[{FRIENDS_LIST_MINIZE_BTN}]")
-
-            self.flag_first_time = False
-        
-        print("INTERFACES CLOSED!")
-
-    
     def open_valhalla(self):
         castle = self.page.locator(f"img[{self.castle_menu}]").bounding_box()
         j = 0
@@ -208,6 +189,31 @@ class PockieNinjaFarmBot:
             self.page.mouse.move(castle["x"] + castle["width"]/2, j)
             
         self.page.mouse.click(castle["x"] + castle["width"]/2, j)
+
+
+    def start_farm(self):
+        self.cancel_first_fight()
+        self.count_fight += 1
+        
+        for i in range(0, self.fight_num-1):
+            print("ITERATION NUMBER: ", i+1, " OUT OF ", self.fight_num-1, " FIGHTS")
+            if self.dungeon_lvl == 11:
+                print("ENTERED DUNGEON LVL. 11")
+                ## OPENING THE FIGHT PAGE
+                self.cancel_subsequent_fights(nth_element=self.count_fight)
+                self.count_fight += 1
+            elif self.dungeon_lvl == 16:
+                print("ENTERED DUNGEON LVL. 16")
+                if self.count_fight < 5:
+                    ## OPENING THE FIGHT PAGE
+                    self.cancel_subsequent_fights(nth_element=self.count_fight)
+                    self.count_fight += 1
+                else:
+                    self.battle_select_instance = VALHALLA_CAMP_PANTHEON_ENTRANCE_BATTLE_INSTANCE_SRC
+                    ## OPENING THE FIGHT PAGE
+                    self.cancel_subsequent_fights(nth_element=self.count_fight-(self.fight_num/2))
+                    self.count_fight += 1
+        print("ALL FIGHTS DONE!")
 
 
     def cancel_first_fight(self):
@@ -295,7 +301,100 @@ class PockieNinjaFarmBot:
         self.flag_quit = True
 
 
+################################################################################################################################
+################################################################################################################################
+class PockieNinjaSmeltingMountainsBot(PockieNinjaFarmBot):
+    def __init__(self, username, password, mob_name, headless):
+        self.username = username
+        self.password = password
+        self.headless = headless
+        self.flag_quit = False
+        self.flag_first_time = True
+        self.count_fight = 0
+        self.mob_name = mob_name
+        self.mob_to_farm = ""
 
+
+    def main_loop(self):
+        with sync_playwright() as self.p:
+            self.browser = self.p.chromium.launch(headless=self.headless)
+            print("OPENED BROWSER")
+            
+            ## CREATING A NEW PAGE
+            self.page = self.browser.new_page()
+
+            ## ENTERING WEBSITE
+            self.page.goto("https://pockieninja.online/")
+            print("OPENED LINK")
+
+            ## RELOG
+            self.relog()
+
+            ## SET DUNGEON INFO
+            self.set_farm_info()
+
+            ## CLOSING THE FIGHT PAGE IF IT IS OPEN
+            self.close_fight_page()
+
+            ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
+            self.close_interface()
+
+            ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
+            self.check_if_on_smelting_mountais_camp()
+            
+            while(not self.flag_quit):
+                time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+
+                self.start_farm()
+                
+                print("RESTARTING MACRO...")
+        
+        print("QUITTING...")
+
+
+    def check_if_on_smelting_mountais_camp(self):
+        if self.page.locator(f"img[{SMELTING_MOUNTAINS_BG_SRC}]").count() == 0:
+            print("NOT ON SMELTING MOUNTAINS CAMP! REDIRECTING TO CORRECT PAGE...")
+            self.page.get_by_text("World Map").click()
+            map_canva_box = self.page.locator("div[id='map']").bounding_box()
+            time.sleep(WINDOW_WAIT_STANDARD_DELAY*3)
+
+
+            i = 0
+            for i in range(int(round(map_canva_box["x"])), int(round(map_canva_box["x"] + map_canva_box["width"]*SMELLING_MOUNTAINS_WIDTH_MULTIPLIER)), 2):
+                self.page.mouse.move(i, map_canva_box["y"] + (map_canva_box["height"]*SMELLING_MOUNTAINS_HEIGHT_MULTIPLIER))
+            
+            print("ENTERING SMELTING MOUNTAINS...")
+            self.page.mouse.click(i, map_canva_box["y"] + (map_canva_box["height"]*SMELLING_MOUNTAINS_HEIGHT_MULTIPLIER))
+                 
+    
+    def set_farm_info(self):
+        if self.mob_name == "Sunflower (lvl 2)":
+            self.mob_to_farm = SUNFLOWER_ICON_SRC
+        elif self.mob_name == "Bee (lvl 4)":
+            self.mob_to_farm = BEE_ICON_SRC
+        elif self.mob_name == "Sushi (lvl 6)":
+            self.mob_to_farm = SUSHI_ICON_SRC
+        elif self.mob_name == "Scarlet (lvl 8)":
+            self.mob_to_farm = SCARLET_ICON_SRC
+        elif self.mob_name == "Warrior of Darkness (lvl 10)":
+            self.mob_to_farm = WARRIOR_OF_DARKNESS_ICON_SRC
+
+    
+    def start_farm(self):
+        self.page.locator(f"img[{self.mob_to_farm}]").click()
+        
+        ## CHECK IF CANVAS BATLLE STILL OPEN
+        while True:
+            if self.page.get_by_text("Close").count() > 0:
+                self.page.get_by_text("Close").click()
+                time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+                break
+
+
+
+################################################################################################################################
+################################################################################################################################
 class CheckLoginCredentials:
     def __init__(self, username, password):
         self.username = username
@@ -324,21 +423,28 @@ class CheckLoginCredentials:
             time.sleep(WINDOW_WAIT_STANDARD_DELAY)
 
             ## CHECK IF CREDENTIALS ARE VALID
+            case = 0
             if self.page.get_by_text("Invalid username.").count() > 0:
                 print("INVALID USERNAME!")
                 self.flag_wrong_credentials = True
+                case = 'username'
             elif self.page.get_by_text("Invalid password.").count() > 0:
                 print("INVALID PASSWORD!")
                 self.flag_wrong_credentials = True
+                case = 'password'
+            elif self.page.get_by_text("Already logged in.").count() > 0:
+                print("ACCOUNT ALREADY LOGGED IN. PONTENTIAL TIMEOUT!")
+                self.flag_wrong_credentials = True
+                case = 'logedin'
 
             ## CLOSING BROWSER
             self.browser.close()
         
-        return self.flag_wrong_credentials
+        return self.flag_wrong_credentials, case
 
 
 if __name__ == "__main__":
-    bot = PockieNinjaFarmBot(dungeon_lvl=11, username='clib_haze', password='limaolima1', headless=False)
+    bot = PockieNinjaValhallaBot(username='clib_haze', password='limaolima1', dungeon_lvl=11, headless=False)
     bot.main_loop()
 
 

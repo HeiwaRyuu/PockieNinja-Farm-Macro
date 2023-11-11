@@ -101,6 +101,9 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                 self.relog()
             
                 while(not self.flag_quit):
+                    ## PICK CARD AFTER RESET (YES, THIS IS SUPPOSED TO BE HERE, OTHERWISE, IF INTERFACE SHOWS UP BEHING CARDS, I WILL GENERATE AN INFINITE LOOP, THIS IS A QUICK SOLUTION)
+                    self.pick_card_after_reset()
+
                     ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
                     self.close_interface()
 
@@ -110,8 +113,7 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                     ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
                     self.check_if_on_valhalla_camp()
 
-                    ## PICK CARD AFTER RESET
-                    self.pick_card_after_reset()
+                    
 
                     time.sleep(WINDOW_WAIT_STANDARD_DELAY)
 
@@ -406,12 +408,11 @@ class PockieNinjaSmeltingMountainsBot(PockieNinjaFarmBot):
     
     def start_farm(self):
         self.page.locator(f"img[{self.mob_to_farm}]").click()
-        
         ## CHECK IF CANVAS BATLLE STILL OPEN
         while True:
             if self.page.get_by_text("Close").count() > 0:
-                self.page.get_by_text("Close").click()
                 time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+                self.page.get_by_text("Close").click()
                 break
 
 

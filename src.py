@@ -10,33 +10,63 @@ GO_TO_VILLAGE_ELEMENT=""
 
 
 ## SMELTING MOUNTAINS
-SMELLING_MOUNTAINS_WIDTH_MULTIPLIER=0.0872
-SMELLING_MOUNTAINS_HEIGHT_MULTIPLIER=0.798
+SMELTING_MOUNTAINS_AREA_NAME="Semelting Mountains"
+SMELTING_MOUNTAINS_WIDTH_MULTIPLIER=0.0872
+SMELTING_MOUNTAINS_HEIGHT_MULTIPLIER=0.798
 SMELTING_MOUNTAINS_BG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/backgrounds/smelting_mountains.png'"
 SUNFLOWER_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10076.png'"
 BEE_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10065.png'"
 SUSHI_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10085.png'"
 SCARLET_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10001.png'"
 WARRIOR_OF_DARKNESS_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10002.png'"
+SUNFLOWER_NAME="Sunflower (lvl 2)"
+BEE_NAME="Bee (lvl 4)"
+SUSHI_NAME="Sushi (lvl 6)"
+SCARLET_NAME="Scarlet (lvl 8)"
+WARRIOR_OF_DARKNESS_NAME="Warrior of Darkness (lvl 10)"
+
+
+## EVENTIDE BARRENS
+EVENTIDE_BARRENS_AREA_NAME="Eventide Barrens"
+EVENTIDE_BARRENS_WIDTH_MULTIPLIER=0.162
+EVENTIDE_BARRENS_HEIGHT_MULTIPLIER=0.705
+EVENTIDE_BARRENS_BG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/backgrounds/eventide_barrens.png'"
+POTATO_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10077.png'"
+MONKEY_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10067.png'"
+MEAL_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10086.png'"
+KAPPA_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10070.png'"
+BULLHEAD_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10004.png'"
+POTATO_NAME="Potato (lvl 12)"
+MONKEY_NAME="Monkey (lvl 14)"
+MEAL_NAME="Meal (lvl 16)"
+KAPPA_NAME="Kappa (lvl 18)"
+BULLHEAD_NAME="Bullhead (lvl 20)"
 
 
 ## DEMON CITY
 DEMON_CITY_HEIGHT_MULTIPLIER=0.2
 
+
 ## VALHALLA
 VALLHALLA_ENCAMPMENT="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/village/demon/valhalla.png'"
 VALHALLA_BG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/bg.png'"
+NORMAL_VALHALLA_DIFFICULTY="Normal"
+SOLO_VALHALLA_DIFFICULTY="Solo"
+VALHALLA_LVL_11="11"
+VALHALLA_LVL_16="16"
+
 
 ## DUNGEON LVL 11
 DECADENT_NEST_CASTLE_MENU_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/buildings/0.png'"
-DECADENT_NEST_NORMAL_MODE_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/select.png'"
+DECADENT_NEST_DIFFICULTY_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/select.png'"
 DECADENT_NEST_BATTLE_INSTANCE_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/dungeons/0/0.png'"
 DECADENT_NEST_BATTLE_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10005.png'"
 DECADENT_NEST_FIGHT_NUM=5
 
+
 ## DUNGEON LVL 16
 VALHALLA_CAMP_CASTLE_MENU_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/buildings/1.png'"
-VALHALLA_CAMP_NORMAL_MODE_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/select.png'"
+VALHALLA_CAMP_DIFFICULTY_SRC_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/select.png'"
 VALHALLA_CAMP_CAMP_OUTPOST_BATTLE_INSTANCE_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/dungeons/1/0.png'"
 VALHALLA_CAMP_PANTHEON_ENTRANCE_BATTLE_INSTANCE_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/dungeons/1/1.png'"
 VALHALLA_CAMP_BATTLE_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10005.png'"

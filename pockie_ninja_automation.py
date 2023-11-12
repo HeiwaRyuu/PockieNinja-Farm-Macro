@@ -65,8 +65,9 @@ class PockieNinjaFarmBot:
 ################################################################################################################################
 ################################################################################################################################
 class PockieNinjaValhallaBot(PockieNinjaFarmBot):
-    def __init__(self, username, password, dungeon_lvl, headless):
+    def __init__(self, username, password, dungeon_lvl, difficulty, headless):
         self.dungeon_lvl = dungeon_lvl
+        self.difficulty = difficulty
         self.username = username
         self.password = password
         self.headless = headless
@@ -75,7 +76,6 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         self.count_fight = 0
         self.fight_num = ""
         self.castle_menu = ""
-        self.menu_mode = ""
         self.begin_btn = ""
         self.battle_select_instance = ""
         self.battle_icon = ""
@@ -129,6 +129,7 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                         ## RELOG
                         self.relog()
                         print("RESTARTING MACRO...")
+
             
             print("QUITTING...")
             return True
@@ -145,14 +146,14 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         if self.dungeon_lvl == 11:
             self.fight_num = DECADENT_NEST_FIGHT_NUM
             self.castle_menu = DECADENT_NEST_CASTLE_MENU_SRC
-            self.menu_mode = DECADENT_NEST_NORMAL_MODE_SRC
+            self.difficulty_src = DECADENT_NEST_DIFFICULTY_SRC
             self.begin_btn = BEGIN_BTN_SRC
             self.battle_select_instance = DECADENT_NEST_BATTLE_INSTANCE_SRC
             self.battle_icon = DECADENT_NEST_BATTLE_ICON_SRC
         elif self.dungeon_lvl == 16:
             self.fight_num = VALLHALLA_CAMP_FIGHT_NUM
             self.castle_menu = VALHALLA_CAMP_CASTLE_MENU_SRC
-            self.menu_mode = VALHALLA_CAMP_NORMAL_MODE_SRC
+            self.difficulty_src = VALHALLA_CAMP_DIFFICULTY_SRC_SRC
             self.begin_btn = BEGIN_BTN_SRC
             self.battle_select_instance = VALHALLA_CAMP_CAMP_OUTPOST_BATTLE_INSTANCE_SRC
             self.battle_icon = VALHALLA_CAMP_BATTLE_ICON_SRC
@@ -233,7 +234,10 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         self.open_valhalla()
 
         ## CLICKING NORMAL MODE
-        self.page.locator(f"img[{self.menu_mode}]").nth(-1).click()
+        if self.difficulty == NORMAL_VALHALLA_DIFFICULTY:
+            self.page.locator(f"img[{self.difficulty_src}]").nth(0).click()
+        else:
+            self.page.locator(f"img[{self.difficulty_src}]").nth(-1).click()
 
         ## CLICKING BEGIN
         self.page.click(f"img[{self.begin_btn}]")
@@ -314,16 +318,50 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
 ################################################################################################################################
 ################################################################################################################################
-class PockieNinjaSmeltingMountainsBot(PockieNinjaFarmBot):
-    def __init__(self, username, password, mob_name, headless):
+class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
+    def __init__(self, username, password, area_name, mob_name, headless):
         self.username = username
         self.password = password
         self.headless = headless
         self.flag_quit = False
         self.flag_first_time = True
         self.count_fight = 0
+        self.area_name = area_name
         self.mob_name = mob_name
         self.mob_to_farm = ""
+        self.set_src_variables()
+
+
+    def set_src_variables(self):
+        if self.area_name == SMELTING_MOUNTAINS_AREA_NAME:
+            self.width_multiplier = SMELTING_MOUNTAINS_WIDTH_MULTIPLIER
+            self.height_multiplier = SMELTING_MOUNTAINS_HEIGHT_MULTIPLIER
+            self.bg_src = SMELTING_MOUNTAINS_BG_SRC
+            self.mob_0_icon_src = SUNFLOWER_ICON_SRC
+            self.mob_1_icon_src = BEE_ICON_SRC
+            self.mob_2_icon_src = SUSHI_ICON_SRC
+            self.mob_3_icon_src = SCARLET_ICON_SRC
+            self.mob_4_icon_src = WARRIOR_OF_DARKNESS_ICON_SRC
+            self.mob_0_name = SUNFLOWER_NAME
+            self.mob_1_name = BEE_NAME
+            self.mob_2_name = SUSHI_NAME
+            self.mob_3_name = SCARLET_NAME
+            self.mob_4_name = WARRIOR_OF_DARKNESS_NAME
+            
+        elif self.area_name == EVENTIDE_BARRENS_AREA_NAME:
+            self.width_multiplier = EVENTIDE_BARRENS_WIDTH_MULTIPLIER
+            self.height_multiplier = EVENTIDE_BARRENS_HEIGHT_MULTIPLIER
+            self.bg_src = EVENTIDE_BARRENS_BG_SRC
+            self.mob_0_icon_src = POTATO_ICON_SRC
+            self.mob_1_icon_src = MONKEY_ICON_SRC
+            self.mob_2_icon_src = MEAL_ICON_SRC
+            self.mob_3_icon_src = KAPPA_ICON_SRC
+            self.mob_4_icon_src = BULLHEAD_ICON_SRC
+            self.mob_0_name = POTATO_NAME
+            self.mob_1_name = MONKEY_NAME
+            self.mob_2_name = MEAL_NAME
+            self.mob_3_name = KAPPA_NAME
+            self.mob_4_name = BULLHEAD_NAME
 
 
     def main_loop(self):
@@ -378,7 +416,7 @@ class PockieNinjaSmeltingMountainsBot(PockieNinjaFarmBot):
 
 
     def check_if_on_smelting_mountais_camp(self):
-        if self.page.locator(f"img[{SMELTING_MOUNTAINS_BG_SRC}]").count() == 0:
+        if self.page.locator(f"img[{self.bg_src}]").count() == 0:
             print("NOT ON SMELTING MOUNTAINS CAMP! REDIRECTING TO CORRECT PAGE...")
             self.page.get_by_text("World Map").click()
             map_canva_box = self.page.locator("div[id='map']").bounding_box()
@@ -386,24 +424,24 @@ class PockieNinjaSmeltingMountainsBot(PockieNinjaFarmBot):
 
 
             i = 0
-            for i in range(int(round(map_canva_box["x"])), int(round(map_canva_box["x"] + map_canva_box["width"]*SMELLING_MOUNTAINS_WIDTH_MULTIPLIER)), 2):
-                self.page.mouse.move(i, map_canva_box["y"] + (map_canva_box["height"]*SMELLING_MOUNTAINS_HEIGHT_MULTIPLIER))
+            for i in range(int(round(map_canva_box["x"])), int(round(map_canva_box["x"] + map_canva_box["width"]*self.width_multiplier)), 2):
+                self.page.mouse.move(i, map_canva_box["y"] + (map_canva_box["height"]*self.height_multiplier))
             
             print("ENTERING SMELTING MOUNTAINS...")
-            self.page.mouse.click(i, map_canva_box["y"] + (map_canva_box["height"]*SMELLING_MOUNTAINS_HEIGHT_MULTIPLIER))
+            self.page.mouse.click(i, map_canva_box["y"] + (map_canva_box["height"]*self.height_multiplier))
                  
     
     def set_farm_info(self):
-        if self.mob_name == "Sunflower (lvl 2)":
-            self.mob_to_farm = SUNFLOWER_ICON_SRC
-        elif self.mob_name == "Bee (lvl 4)":
-            self.mob_to_farm = BEE_ICON_SRC
-        elif self.mob_name == "Sushi (lvl 6)":
-            self.mob_to_farm = SUSHI_ICON_SRC
-        elif self.mob_name == "Scarlet (lvl 8)":
-            self.mob_to_farm = SCARLET_ICON_SRC
-        elif self.mob_name == "Warrior of Darkness (lvl 10)":
-            self.mob_to_farm = WARRIOR_OF_DARKNESS_ICON_SRC
+        if self.mob_name == self.mob_0_name:
+            self.mob_to_farm = self.mob_0_icon_src
+        elif self.mob_name == self.mob_1_name:
+            self.mob_to_farm = self.mob_1_icon_src
+        elif self.mob_name == self.mob_2_name:
+            self.mob_to_farm = self.mob_2_icon_src
+        elif self.mob_name == self.mob_3_name:
+            self.mob_to_farm = self.mob_3_icon_src
+        elif self.mob_name == self.mob_4_name:
+            self.mob_to_farm = self.mob_4_icon_src
 
     
     def start_farm(self):
@@ -414,7 +452,6 @@ class PockieNinjaSmeltingMountainsBot(PockieNinjaFarmBot):
                 time.sleep(WINDOW_WAIT_STANDARD_DELAY)
                 self.page.get_by_text("Close").click()
                 break
-
 
 
 ################################################################################################################################
@@ -468,7 +505,7 @@ class CheckLoginCredentials:
 
 
 if __name__ == "__main__":
-    bot = PockieNinjaValhallaBot(username='clib_haze', password='limaolima1', dungeon_lvl=11, headless=False)
+    bot = PockieNinjaValhallaBot(username='clib_haze', password='limaolima1', dungeon_lvl=11, difficulty='solo', headless=False)
     bot.main_loop()
 
 

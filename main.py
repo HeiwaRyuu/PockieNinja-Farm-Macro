@@ -5,8 +5,10 @@ from pockie_ninja_automation import *
 import sys
 import threading
 from PyQt5.QtWidgets import QApplication
+from src import *
 
-STANDARD_WINDOW_SIZE="300x400"
+STANDARD_WINDOW_SIZE="300x475"
+STANDARD_AREA_FARM_WINDOW_SIZE ="300x475"
 MAIN_MENU_WINDOW_SIZE="200x150"
 
 
@@ -16,7 +18,7 @@ def set_style():
     style.configure("TButton", padding=6, relief="flat", background="#ccc")
 
 
-## CREATE A MAIN MENU WHERE IT CAN GO TO VALHALLA FARM OR SMELTING MOUNTAINS
+## CREATE A MAIN MENU WHERE IT CAN GO TO VALHALLA FARM OR REGULAR AREA FARM
 class MainMenu(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -35,8 +37,8 @@ class MainMenu(tk.Frame):
         self.valhalla_farm_button = ttk.Button(self, text="Valhalla Farm", command=self.on_valhalla_farm_button_click)
         self.valhalla_farm_button.grid(pady=10)
 
-        self.smelting_mountains_button = ttk.Button(self, text="Smelting Mountains (lvl 1)", command=self.on_smelting_mountains_button_click)
-        self.smelting_mountains_button.grid(pady=10)
+        self.regular_area_button = ttk.Button(self, text="Regular Area Farm", command=self.on_regular_area_button_click)
+        self.regular_area_button.grid(pady=25)
 
 
     def on_valhalla_farm_button_click(self):
@@ -52,12 +54,12 @@ class MainMenu(tk.Frame):
         app.mainloop()
 
 
-    def on_smelting_mountains_button_click(self):
+    def on_regular_area_button_click(self):
         self.master.destroy()
         root = tk.Tk()
         root.grid_rowconfigure(0, weight=1)
         root.grid_columnconfigure(0, weight=1)
-        app = SmeltingMountains(master=root)
+        app = StandardAreaFarm(master=root)
 
         ## STYLE USING TKINTER TTK
         set_style()
@@ -69,7 +71,7 @@ class ValhallaFarm(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.master.title("Pockie Ninja Bot")
+        self.master.title("Pockie Ninja Bot - Valhalla Farm")
         self.master.geometry(STANDARD_WINDOW_SIZE)
         self.master.resizable(False, False)
         self.grid(row=0, column=0, sticky="NESW")
@@ -80,6 +82,22 @@ class ValhallaFarm(tk.Frame):
         self.threads = []
         self.bot = False
         center(self.master)
+
+    
+    def update_difficulties(self, *args):
+        # Reset var and delete all old options
+        self.difficulty_str_var.set('')
+        self.difficulty_option_menu['menu'].delete(0, 'end')
+
+        if self.dungeon_lvl_option_menu.cget("text") == VALHALLA_LVL_11:
+            difficulty_options = [SOLO_VALHALLA_DIFFICULTY]
+        else:
+            difficulty_options = [NORMAL_VALHALLA_DIFFICULTY, SOLO_VALHALLA_DIFFICULTY]
+
+        # Insert list of new options (tk._setit hooks them up to var)
+        for option in difficulty_options:
+            self.difficulty_option_menu['menu'].add_command(label=option, command=tk._setit(self.difficulty_str_var, option))
+        self.difficulty_str_var.set(difficulty_options[0])
 
 
     def create_widgets(self):
@@ -94,16 +112,27 @@ class ValhallaFarm(tk.Frame):
         self.password_entry.grid()
 
 
-        ## SET DUNGEON LEVEL AS A DROPDOWN MENU
-        # Dropdown menu options
-        options = ["11", "16"]
+        ## SET DUNGEON LEVEL AS A OPTION MENU
+        self.dungeon_level_options = [VALHALLA_LVL_11, VALHALLA_LVL_16]
         self.dungeon_lvl_label = ttk.Label(self, text="Dungeon Level")
         self.dungeon_lvl_label.grid()
 
-        dungeon_lvl_str_var = tk.StringVar()
-        dungeon_lvl_str_var.set(options[0])
-        self.dungeon_lvl_option_menu = tk.OptionMenu(self , dungeon_lvl_str_var , *options)
+        self.dungeon_lvl_str_var = tk.StringVar()
+        self.dungeon_lvl_str_var.set(self.dungeon_level_options[0])
+        self.dungeon_lvl_option_menu = tk.OptionMenu(self , self.dungeon_lvl_str_var , *self.dungeon_level_options, command=self.update_difficulties)
         self.dungeon_lvl_option_menu.grid(pady=10)
+
+
+        ## DIFFICULTY OPTION MENU
+        self.difficulty_options = [SOLO_VALHALLA_DIFFICULTY]
+        self.difficulty_option_label = ttk.Label(self, text="Choose difficulty")
+        self.difficulty_option_label.grid()
+
+        self.difficulty_str_var = tk.StringVar()
+        self.difficulty_str_var.set(self.difficulty_options[0])
+        self.difficulty_option_menu = tk.OptionMenu(self , self.difficulty_str_var , *self.difficulty_options)
+        self.difficulty_option_menu.grid(pady=10)
+
 
         ## ADD A CHECKBOX IF YOU WANT TO RUN THE BOT IN HEADLESS MODE
         self.headless_var = tk.IntVar()
@@ -145,6 +174,7 @@ class ValhallaFarm(tk.Frame):
         username = self.username_entry.get()
         password = self.password_entry.get()
         dungeon_lvl = self.dungeon_lvl_option_menu.cget("text")
+        difficulty = self.difficulty_option_menu.cget("text")
         headless = self.headless_var.get()
 
         if headless == 1:
@@ -168,13 +198,13 @@ class ValhallaFarm(tk.Frame):
                 return
             
             messagebox.showinfo("Info", "Valid Credentials!\nStarting Bot!")
-            check_exit_success = self.create_and_run_bot(username, password, dungeon_lvl, headless)
+            check_exit_success = self.create_and_run_bot(username, password, dungeon_lvl, difficulty, headless)
             while not check_exit_success:
-                check_exit_success = self.create_and_run_bot(username, password, dungeon_lvl, headless)
+                check_exit_success = self.create_and_run_bot(username, password, dungeon_lvl, difficulty, headless)
     
 
-    def create_and_run_bot(self, username, password, dungeon_lvl, headless):
-        bot = PockieNinjaValhallaBot(username, password, int(dungeon_lvl), headless=headless)
+    def create_and_run_bot(self, username, password, dungeon_lvl, difficulty, headless):
+        bot = PockieNinjaValhallaBot(username, password, int(dungeon_lvl), difficulty, headless=headless)
         self.bots.append(bot)
         check_exit_success = bot.main_loop()
         return check_exit_success
@@ -190,12 +220,12 @@ class ValhallaFarm(tk.Frame):
             messagebox.showwarning("Warning", "No Bot is not running!")
 
 
-class SmeltingMountains(tk.Frame):
+class StandardAreaFarm(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.master.title("Pockie Ninja Bot")
-        self.master.geometry(STANDARD_WINDOW_SIZE)
+        self.master.title("Pockie Ninja Bot - Mob Farm")
+        self.master.geometry(STANDARD_AREA_FARM_WINDOW_SIZE)
         self.master.resizable(False, False)
         self.grid(row=0, column=0, sticky="NESW")
         self.grid_rowconfigure(0, weight=1)
@@ -205,6 +235,34 @@ class SmeltingMountains(tk.Frame):
         self.threads = []
         self.bot = False
         center(self.master)
+
+
+    def populate_area_names(self):
+        area_names = [SMELTING_MOUNTAINS_AREA_NAME, EVENTIDE_BARRENS_AREA_NAME]
+        return area_names
+
+
+    def populate_mob_names(self):
+        options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME]
+        return options
+    
+    
+    def update_mob_names(self, *args):
+        # Reset var and delete all old options
+        self.mob_name_str_var.set('')
+        self.mob_name_option_menu['menu'].delete(0, 'end')
+
+        area_name = self.area_name_option_menu.cget("text")
+
+        if area_name == SMELTING_MOUNTAINS_AREA_NAME:
+            options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME]
+        elif area_name == EVENTIDE_BARRENS_AREA_NAME:
+            options = [POTATO_NAME, MONKEY_NAME, MEAL_NAME, KAPPA_NAME, BULLHEAD_NAME]
+
+        # Insert list of new options (tk._setit hooks them up to var)
+        for option in options:
+            self.mob_name_option_menu['menu'].add_command(label=option, command=tk._setit(self.mob_name_str_var, option))
+        self.mob_name_str_var.set(options[0])
 
 
     def create_widgets(self):
@@ -219,15 +277,25 @@ class SmeltingMountains(tk.Frame):
         self.password_entry.grid()
 
 
-        ## SET DUNGEON LEVEL AS A DROPDOWN MENU
-        # Dropdown menu options
-        options = ["Sunflower (lvl 2)", "Bee (lvl 4)", "Sushi (lvl 6)", "Scarlet (lvl 8)", "Warrior of Darkness (lvl 10)"]
+        ## AREA NAMES DROPDOWN MENU
+        area_options = self.populate_area_names()
+        self.area_option_label = ttk.Label(self, text="Choose Area")
+        self.area_option_label.grid()
+
+        self.area_name_str_var = tk.StringVar()
+        self.area_name_str_var.set(area_options[0])
+        self.area_name_option_menu = tk.OptionMenu(self , self.area_name_str_var , *area_options, command=self.update_mob_names)
+        self.area_name_option_menu.grid(pady=10)
+
+
+        ## MOB NAMES DROPDOWN MENU
+        mobs_options = self.populate_mob_names()
         self.mob_option_label = ttk.Label(self, text="Choose Mob")
         self.mob_option_label.grid()
 
-        mob_name_str_var = tk.StringVar()
-        mob_name_str_var.set(options[0])
-        self.mob_name_option_menu = tk.OptionMenu(self , mob_name_str_var , *options)
+        self.mob_name_str_var = tk.StringVar()
+        self.mob_name_str_var.set(mobs_options[0])
+        self.mob_name_option_menu = tk.OptionMenu(self , self.mob_name_str_var , *mobs_options)
         self.mob_name_option_menu.grid(pady=10)
 
         ## ADD A CHECKBOX IF YOU WANT TO RUN THE BOT IN HEADLESS MODE
@@ -267,6 +335,7 @@ class SmeltingMountains(tk.Frame):
     def start_bot(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
+        area_name = self.area_name_option_menu.cget("text")
         mob_name = self.mob_name_option_menu.cget("text")
         headless = self.headless_var.get()
 
@@ -291,13 +360,13 @@ class SmeltingMountains(tk.Frame):
                 return
             
             messagebox.showinfo("Info", "Valid Credentials!\nStarting Bot!")
-            check_exit_success = self.create_and_run_bot(username, password, mob_name, headless)
+            check_exit_success = self.create_and_run_bot(username, password, area_name, mob_name, headless)
             while not check_exit_success:
-                check_exit_success = self.create_and_run_bot(username, password, mob_name, headless)
+                check_exit_success = self.create_and_run_bot(username, password, area_name, mob_name, headless)
 
 
-    def create_and_run_bot(self, username, password, mob_name, headless):
-        bot = PockieNinjaSmeltingMountainsBot(username, password, mob_name, headless=headless)
+    def create_and_run_bot(self, username, password, area_name, mob_name, headless):
+        bot = PockieNinjaStandardAreaFarm(username, password, area_name, mob_name, headless=headless)
         self.bots.append(bot)
         check_exit_success = bot.main_loop()
         return check_exit_success

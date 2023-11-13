@@ -113,8 +113,6 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                     ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
                     self.check_if_on_valhalla_camp()
 
-                    
-
                     time.sleep(WINDOW_WAIT_STANDARD_DELAY)
 
                     self.start_farm()
@@ -127,7 +125,7 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                         ## RELOAD
                         self.page.reload()
                         ## RELOG
-                        self.relog()
+                        # self.relog()
                         print("RESTARTING MACRO...")
 
             
@@ -185,7 +183,7 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
     
     def pick_card_after_reset(self):
-        time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+        time.sleep(WINDOW_WAIT_STANDARD_DELAY*3)
         if self.page.locator(f"img[{CARD_IMG_SRC}]").count() > 0:
             print("PICKING LEFTOVER CARDS (OBS: LEFT FROM PREVIOUS SESSION)")
             self.page.locator(f"img[{CARD_IMG_SRC}]").nth(-1).click()
@@ -251,13 +249,13 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         ## REFRESH PAGE
         self.page.reload()
 
-        ## RELOG
-        self.relog()
+        ## RELOG -> NO NEED TO RELOG ANYMORE, BROWSER IS NOW SAVING COOKIES!
+        # self.relog()
 
 
     def cancel_subsequent_fights(self, nth_element):
         print("CANCELLING SUBSEQUENT FIGHTS...")
-        max_tries = 20
+        max_tries = MAX_TRIES
         try_count = 0
 
         print("WAITING FOR THE INSTANCE TO APPEAR...")
@@ -269,7 +267,7 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                 time.sleep(ADDITIONAL_SLEEP_TIME)
             ## REFRESH PAGE AND RELOG
             self.page.reload()
-            self.relog()
+            # self.relog() -> NO NEED TO RELOG ANYMORE! BROWSER SAVING COOKIES NOW
             time.sleep(WINDOW_WAIT_STANDARD_DELAY)
             try_count += 1
 
@@ -285,13 +283,13 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         ## REFRESH PAGE
         self.page.reload()
 
-        print("RELOGGING...")
+        # print("RELOGGING...") -> NO NEED TO RELOG ANYMORE! BROWSER SAVING COOKIES NOW
         ## RELOG
-        self.relog()
+        # self.relog()
 
     
     def click_card(self):
-        max_tries = 30
+        max_tries = MAX_TRIES
         try_count = 0
 
         print("WAITING FOR THE CARD TO APPEAR...")
@@ -300,7 +298,7 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                 break
             ## REFRESH PAGE AND RELOG
             self.page.reload()
-            self.relog()
+            # self.relog()
             time.sleep(3)
             try_count += 1
 
@@ -342,11 +340,14 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
             self.mob_2_icon_src = SUSHI_ICON_SRC
             self.mob_3_icon_src = SCARLET_ICON_SRC
             self.mob_4_icon_src = WARRIOR_OF_DARKNESS_ICON_SRC
+            self.mob_5_icon_src = DEMON_BRUTE_ICON_SRC
             self.mob_0_name = SUNFLOWER_NAME
             self.mob_1_name = BEE_NAME
             self.mob_2_name = SUSHI_NAME
             self.mob_3_name = SCARLET_NAME
             self.mob_4_name = WARRIOR_OF_DARKNESS_NAME
+            self.mob_5_name = DEMON_BRUTE_NAME
+            self.boss_ticket = BOSS_TICKET_LVL_10
             
         elif self.area_name == EVENTIDE_BARRENS_AREA_NAME:
             self.width_multiplier = EVENTIDE_BARRENS_WIDTH_MULTIPLIER
@@ -357,11 +358,14 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
             self.mob_2_icon_src = MEAL_ICON_SRC
             self.mob_3_icon_src = KAPPA_ICON_SRC
             self.mob_4_icon_src = BULLHEAD_ICON_SRC
+            self.mob_5_icon_src = PLAGUE_DEMON_ICON_SRC
             self.mob_0_name = POTATO_NAME
             self.mob_1_name = MONKEY_NAME
             self.mob_2_name = MEAL_NAME
             self.mob_3_name = KAPPA_NAME
             self.mob_4_name = BULLHEAD_NAME
+            self.mob_5_name = PLAGUE_DEMON_NAME
+            self.boss_ticket = BOSS_TICKET_LVL_20
 
 
     def main_loop(self):
@@ -442,16 +446,41 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
             self.mob_to_farm = self.mob_3_icon_src
         elif self.mob_name == self.mob_4_name:
             self.mob_to_farm = self.mob_4_icon_src
+        elif self.mob_name == self.mob_5_name:
+            self.mob_to_farm = self.mob_5_icon_src
+
+
+    def boss_farm(self):
+        flag_has_ticket = False
+        ## OPENING PLAYER BAG
+        self.page.locator(f"img[{PLAYER_BAG}]").click
+
+        for bag_slot in range(MAX_BAG_SLOTS): ## BAG SLOTS SET TO 12 BECAUSE THERE ARE 2 BUTTONS IN THE BAG INTERFACE THAT HAVE NO CORRELATION WITH BAG SLOTS (WE WILL SKIP THEM)
+            if bag_slot < 2: ## IGNORING FIRST 2 BUTTONS THAT HAVE NOTHING TO DO WITH BAG SLOTS
+                pass
+            else:
+                if self.page.locator(f"img[{PLAYER_BAG}]").count() > 0:
+                    flag_has_ticket = True
+                    break
+
+        if not flag_has_ticket:
+            print("PLAYER HAS NO BOSS TICKETS FOR THIS AREA... FINISHING MACRO...")
+            return True ## RETURNING TRUE TO self.flag_quit TO END THE MACRO, AS THE PLAYER HAS NO MORE TICKETS TO FARM THE BOSS
 
     
     def start_farm(self):
-        self.page.locator(f"img[{self.mob_to_farm}]").click()
-        ## CHECK IF CANVAS BATLLE STILL OPEN
-        while True:
-            if self.page.get_by_text("Close").count() > 0:
-                time.sleep(WINDOW_WAIT_STANDARD_DELAY)
-                self.page.get_by_text("Close").click()
-                break
+        ## CHECK IF MOB TO FARM IS A BOSS:
+        if "BOSS" in self.mob_name:
+            self.flag_quit = self.boss_farm()
+        else:
+            self.page.locator(f"img[{self.mob_to_farm}]").click()
+            ## CHECK IF CANVAS BATLLE STILL OPEN
+            while True:
+                if self.page.get_by_text("Close").count() > 0:
+                    time.sleep(WINDOW_WAIT_STANDARD_DELAY)
+                    self.page.get_by_text("Close").click()
+                    break
+
 
 
 ################################################################################################################################

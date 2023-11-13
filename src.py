@@ -7,7 +7,15 @@ CARD_IMG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/p
 BATTLE_CANVAS="canvas[width='1000']"
 MAP_CANVAS="canvas[width='768']"
 GO_TO_VILLAGE_ELEMENT=""
+MAX_TRIES=30
 
+
+## PLAYER ITEMS
+PLAYER_BAG="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/features/bottom-menu/11-1.png'"
+BAG_SLOTS="class='tabbed_pane__tab_button'"
+MAX_BAG_SLOTS=12
+BOSS_TICKET_LVL_10="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/items/etc/51.png'"
+BOSS_TICKET_LVL_20=""
 
 ## SMELTING MOUNTAINS
 SMELTING_MOUNTAINS_AREA_NAME="Semelting Mountains"
@@ -19,11 +27,13 @@ BEE_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/p
 SUSHI_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10085.png'"
 SCARLET_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10001.png'"
 WARRIOR_OF_DARKNESS_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10002.png'"
+DEMON_BRUTE_ICON_SRC="id='npc-container-10019'"
 SUNFLOWER_NAME="Sunflower (lvl 2)"
 BEE_NAME="Bee (lvl 4)"
 SUSHI_NAME="Sushi (lvl 6)"
 SCARLET_NAME="Scarlet (lvl 8)"
 WARRIOR_OF_DARKNESS_NAME="Warrior of Darkness (lvl 10)"
+DEMON_BRUTE_NAME="Demon Brute (BOSS)"
 
 
 ## EVENTIDE BARRENS
@@ -36,11 +46,13 @@ MONKEY_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.co
 MEAL_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10086.png'"
 KAPPA_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10070.png'"
 BULLHEAD_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10004.png'"
+PLAGUE_DEMON_ICON_SRC="id='npc-container-10026'"
 POTATO_NAME="Potato (lvl 12)"
 MONKEY_NAME="Monkey (lvl 14)"
 MEAL_NAME="Meal (lvl 16)"
 KAPPA_NAME="Kappa (lvl 18)"
 BULLHEAD_NAME="Bullhead (lvl 20)"
+PLAGUE_DEMON_NAME="Plague Demon (BOSS)"
 
 
 ## DEMON CITY

@@ -243,7 +243,7 @@ class StandardAreaFarm(tk.Frame):
 
 
     def populate_mob_names(self):
-        options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME, DEMON_BRUTE_NAME]
+        options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME] # , DEMON_BRUTE_NAME
         return options
     
     
@@ -255,9 +255,9 @@ class StandardAreaFarm(tk.Frame):
         area_name = self.area_name_option_menu.cget("text")
 
         if area_name == SMELTING_MOUNTAINS_AREA_NAME:
-            options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME, DEMON_BRUTE_NAME]
+            options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME] # , DEMON_BRUTE_NAME
         elif area_name == EVENTIDE_BARRENS_AREA_NAME:
-            options = [POTATO_NAME, MONKEY_NAME, MEAL_NAME, KAPPA_NAME, BULLHEAD_NAME, PLAGUE_DEMON_NAME]
+            options = [POTATO_NAME, MONKEY_NAME, MEAL_NAME, KAPPA_NAME, BULLHEAD_NAME] # , PLAGUE_DEMON_NAME
 
         # Insert list of new options (tk._setit hooks them up to var)
         for option in options:

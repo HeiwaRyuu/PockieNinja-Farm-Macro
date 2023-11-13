@@ -228,17 +228,20 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
     def cancel_first_fight(self):
         print("CANCELLING FIRST FIGHT...")
-        ## CLICKING INTO VALLHALLA DECANDENT NEST LVL. 11 --> I HAVE TO BRUSH THE WHOLE AREA TO FIND THE IMAGE (HOVER OVER IT)
+        ## CLICKING INTO VALLHALLA TEMPLE IMAGE --> I HAVE TO BRUSH THE WHOLE AREA TO FIND THE IMAGE (HOVER OVER IT)
         self.open_valhalla()
 
-        ## CLICKING NORMAL MODE
-        if self.difficulty == NORMAL_VALHALLA_DIFFICULTY:
-            self.page.locator(f"img[{self.difficulty_src}]").nth(0).click()
-        else:
-            self.page.locator(f"img[{self.difficulty_src}]").nth(-1).click()
+        try:
+            ## CLICKING NORMAL MODE
+            if self.difficulty == NORMAL_VALHALLA_DIFFICULTY:
+                self.page.locator(f"img[{self.difficulty_src}]").nth(0).click()
+            else:
+                self.page.locator(f"img[{self.difficulty_src}]").nth(-1).click()
 
-        ## CLICKING BEGIN
-        self.page.click(f"img[{self.begin_btn}]")
+            ## CLICKING BEGIN
+            self.page.click(f"img[{self.begin_btn}]")
+        except:
+            print(f"ALREADY MIDFARM... COULD NOT FIND DIFFICULTY, STARTING NEW FARM WITH PREVIOUS DIFFICULTY == {self.difficulty}...")
 
         ## SELECTING INSTANCE
         self.page.click(f"img[{self.battle_select_instance}]")

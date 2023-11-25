@@ -122,10 +122,6 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                         ## CLICK ON THE CARD GET REWARD AND RESTART MACRO
                         self.click_card()
                         self.count_fight = 0
-                        ## RELOAD
-                        self.page.reload()
-                        ## RELOG
-                        # self.relog()
                         print("RESTARTING MACRO...")
 
             
@@ -203,9 +199,8 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
     def start_farm(self):
         self.cancel_first_fight()
-        self.count_fight += 1
         
-        for i in range(0, self.fight_num-1):
+        for i in range(0, self.fight_num):
             print("ITERATION NUMBER: ", i+1, " OUT OF ", self.fight_num-1, " FIGHTS")
             if self.dungeon_lvl == 11:
                 print("ENTERED DUNGEON LVL. 11")
@@ -223,6 +218,8 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                     ## OPENING THE FIGHT PAGE
                     self.cancel_subsequent_fights(nth_element=self.count_fight-(self.fight_num/2))
                     self.count_fight += 1
+        ## REFRESH PAGE
+        self.page.reload()
         print("ALL FIGHTS DONE!")
 
 
@@ -244,17 +241,6 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         except:
             print(f"ALREADY MIDFARM... COULD NOT FIND DIFFICULTY, STARTING NEW FARM WITH PREVIOUS DIFFICULTY == {self.difficulty}...")
 
-        ## SELECTING INSTANCE
-        self.page.click(f"img[{self.battle_select_instance}]")
-
-        ## ENTERING BATTLE
-        self.page.click(f"img[{self.battle_icon}]")
-
-        ## REFRESH PAGE
-        self.page.reload()
-
-        ## RELOG -> NO NEED TO RELOG ANYMORE, BROWSER IS NOW SAVING COOKIES!
-        # self.relog()
 
 
     def cancel_subsequent_fights(self, nth_element):
@@ -262,34 +248,31 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         max_tries = MAX_TRIES
         try_count = 0
 
-        print("WAITING FOR THE INSTANCE TO APPEAR...")
-        while (try_count < max_tries):
-            print("TRY NUMBER: ", try_count+1, " OUT OF ", max_tries)
-            if (self.page.locator(f"img[{self.battle_select_instance}]").count() > 0) and (self.page.locator(f"{BATTLE_CANVAS}").count() == 0):
-                break
-            if try_count == 0:
-                time.sleep(ADDITIONAL_SLEEP_TIME)
-            ## REFRESH PAGE AND RELOG
-            self.page.reload()
-            # self.relog() -> NO NEED TO RELOG ANYMORE! BROWSER SAVING COOKIES NOW
-            time.sleep(WINDOW_WAIT_STANDARD_DELAY)
-            try_count += 1
-
         ## SELECTING INSTANCE
-        self.page.click(f"img[{self.battle_select_instance}]")
+        if (nth_element == 0):
+            self.page.click(f"img[{self.battle_select_instance}]")
  
         print("ENTERING BATTLE...") 
         ## ENTERING BATTLE
         nth_instance = self.page.locator(f"img[{self.battle_icon}]")
         nth_instance.nth(nth_element).click()
 
-        print("REFRESHING PAGE...")
-        ## REFRESH PAGE
-        self.page.reload()
+        while (try_count < max_tries):
+            print("WAITING FOR THE FIGHT TO END...")
+            print("TRY NUMBER: ", try_count+1, " OUT OF ", max_tries)
+            if (self.page.get_by_role("button", name="Close").count() > 0):
+                self.page.get_by_role("button", name="Close").click()
+                break
 
-        # print("RELOGGING...") -> NO NEED TO RELOG ANYMORE! BROWSER SAVING COOKIES NOW
-        ## RELOG
-        # self.relog()
+            time.sleep(WINDOW_WAIT_STANDARD_DELAY*2)
+            try_count += 1
+
+        time.sleep(WINDOW_WAIT_STANDARD_DELAY*2)
+        if(try_count >= max_tries):
+            print("MAX WAITING TIM EXCEEDED...")
+            self.page.close()
+
+        
 
     
     def click_card(self):
@@ -298,12 +281,9 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
         print("WAITING FOR THE CARD TO APPEAR...")
         while (try_count < max_tries):
-            if (self.page.locator(f"img[{CARD_IMG_SRC}]").count() > 0) and (self.page.locator(f"{BATTLE_CANVAS}").count() == 0):
+            if (self.page.locator(f"img[{CARD_IMG_SRC}]").count() > 0):
                 break
-            ## REFRESH PAGE AND RELOG
-            self.page.reload()
-            # self.relog()
-            time.sleep(3)
+            time.sleep(WINDOW_WAIT_STANDARD_DELAY)
             try_count += 1
 
         print("CLICKING ON THE CARD...")

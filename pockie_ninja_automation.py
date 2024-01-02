@@ -32,6 +32,11 @@ class PockieNinjaFarmBot:
         print("CLOSING INTERFACE (CHAT, SETTINGS AND FRIENDS LIST)...")
         time.sleep(WINDOW_WAIT_STANDARD_DELAY)
         if self.flag_first_time:
+            ## CLOSING FRIENDS LIST
+            if self.page.locator(f"img[{FRIENDS_LIST_MINIZE_BTN}]").count() > 0:
+                print("CLOSING FRIENDS LIST...")
+                self.page.click(f"img[{FRIENDS_LIST_MINIZE_BTN}]")
+
             ## CLOSING CHAT
             if self.page.locator(f"img[{CHAT_MINIMIZE_BUTTON}]").count() > 0:
                 print("CLOSING CHAT...")
@@ -41,11 +46,6 @@ class PockieNinjaFarmBot:
             if self.page.locator(f"img[{SETTINGS_CLOSE_BUTTON}]").count() > 0:
                 print("CLOSING SETTINGS...")
                 self.page.click(f"img[{SETTINGS_CLOSE_BUTTON}]")
-
-            ## CLOSING FIRNEDS LIST
-            if self.page.locator(f"img[{FRIENDS_LIST_MINIZE_BTN}]").count() > 0:
-                print("CLOSING FRIENDS LIST...")
-                self.page.click(f"img[{FRIENDS_LIST_MINIZE_BTN}]")
 
             self.flag_first_time = False
         
@@ -71,7 +71,6 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         self.username = username
         self.password = password
         self.headless = headless
-        self.flag_quit = False
         self.flag_first_time = True
         self.count_fight = 0
         self.fight_num = ""
@@ -100,15 +99,15 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                 ## RELOG
                 self.relog()
             
-                while(not self.flag_quit):
+                while True:
                     ## PICK CARD AFTER RESET (YES, THIS IS SUPPOSED TO BE HERE, OTHERWISE, IF INTERFACE SHOWS UP BEHING CARDS, I WILL GENERATE AN INFINITE LOOP, THIS IS A QUICK SOLUTION)
                     self.pick_card_after_reset()
 
-                    ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
-                    self.close_interface()
-
                     ## CLOSING THE FIGHT PAGE IF IT IS OPEN
                     self.close_fight_page()
+
+                    ## CLOSING CHAT, SETTINGS AND FRIENDS LIST
+                    self.close_interface()
 
                     ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
                     self.check_if_on_valhalla_camp()
@@ -117,16 +116,12 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
                     self.start_farm()
                     
-
                     if self.count_fight==self.fight_num:
                         ## CLICK ON THE CARD GET REWARD AND RESTART MACRO
                         self.click_card()
                         self.count_fight = 0
                         print("RESTARTING MACRO...")
 
-            
-            print("QUITTING...")
-            return True
         except (Exception) as e:
             print("EXCEPTION: ", e)
             if "Timeout" in str(e):
@@ -235,7 +230,6 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
                     self.page.locator(f"img[{self.difficulty_src}]").nth(0).click()
                 else:
                     self.page.locator(f"img[{self.difficulty_src}]").nth(-1).click()
-
                 ## CLICKING BEGIN
                 self.page.click(f"img[{self.begin_btn}]")
         except:
@@ -266,11 +260,12 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
 
             time.sleep(WINDOW_WAIT_STANDARD_DELAY*2)
             try_count += 1
-
-        time.sleep(WINDOW_WAIT_STANDARD_DELAY*2)
         if(try_count >= max_tries):
-            print("MAX WAITING TIM EXCEEDED...")
+            print("MAX WAITING TIME EXCEEDED...")
             self.page.close()
+        time.sleep(WINDOW_WAIT_STANDARD_DELAY*2)
+        
+            
 
         
 
@@ -294,10 +289,6 @@ class PockieNinjaValhallaBot(PockieNinjaFarmBot):
         print("CARDS COLLECTED!")
 
 
-    def quit(self):
-        self.flag_quit = True
-
-
 ################################################################################################################################
 ################################################################################################################################
 class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
@@ -305,7 +296,6 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
         self.username = username
         self.password = password
         self.headless = headless
-        self.flag_quit = False
         self.flag_first_time = True
         self.count_fight = 0
         self.area_name = area_name
@@ -380,8 +370,7 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
                 ## CHECK IF ON CORRECT VAHALLA CAMP, IF NOT, ENTER THE CORRECT PAGE
                 self.check_if_on_smelting_mountais_camp()
                 
-
-                while(not self.flag_quit):
+                while True:
                     time.sleep(WINDOW_WAIT_STANDARD_DELAY)
 
                     self.start_farm()
@@ -391,9 +380,6 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
                     print(f"FIGHT NUMBER: {self.count_fight}")
                     
                     print("RESTARTING MACRO...")
-
-            print("QUITTING...")
-            return True
         except (Exception) as e:
             print("EXCEPTION: ", e)
             if "Timeout" in str(e):
@@ -449,13 +435,13 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
 
         if not flag_has_ticket:
             print("PLAYER HAS NO BOSS TICKETS FOR THIS AREA... FINISHING MACRO...")
-            return True ## RETURNING TRUE TO self.flag_quit TO END THE MACRO, AS THE PLAYER HAS NO MORE TICKETS TO FARM THE BOSS
+            self.page.close()
 
     
     def start_farm(self):
         ## CHECK IF MOB TO FARM IS A BOSS:
         if "BOSS" in self.mob_name:
-            self.flag_quit = self.boss_farm()
+            self.boss_farm()
         else:
             self.page.locator(f"img[{self.mob_to_farm}]").click()
             ## CHECK IF CANVAS BATLLE STILL OPEN
@@ -464,7 +450,6 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
                     time.sleep(WINDOW_WAIT_STANDARD_DELAY)
                     self.page.get_by_text("Close").click()
                     break
-
 
 
 ################################################################################################################################
@@ -520,5 +505,3 @@ class CheckLoginCredentials:
 if __name__ == "__main__":
     bot = PockieNinjaValhallaBot(username='clib_haze', password='limaolima1', dungeon_lvl=11, difficulty='solo', headless=False)
     bot.main_loop()
-
-

@@ -4,12 +4,13 @@ from tkinter import messagebox
 from pockie_ninja_automation import *
 import sys
 import threading
-from PyQt5.QtWidgets import QApplication
 from src import *
 
-STANDARD_WINDOW_SIZE="300x475"
-STANDARD_AREA_FARM_WINDOW_SIZE ="300x475"
+VALHALLA_FARM_WINDOW_SIZE="320x200"
+STANDARD_AREA_FARM_WINDOW_SIZE ="340x200"
 MAIN_MENU_WINDOW_SIZE="200x150"
+STANDARD_PADDING_X=15
+STANDARD_PADDING_Y=3
 
 
 def set_style():
@@ -26,28 +27,26 @@ class MainMenu(tk.Frame):
         self.master.title("Pockie Ninja Bot")
         self.master.geometry(MAIN_MENU_WINDOW_SIZE)
         self.master.resizable(False, False)
-        self.grid(row=0, column=0, sticky="NESW")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
         self.create_widgets()
         center(self.master)
 
 
     def create_widgets(self):
-        self.valhalla_farm_button = ttk.Button(self, text="Valhalla Farm", command=self.on_valhalla_farm_button_click)
-        self.valhalla_farm_button.grid(pady=10)
+        self.master.grid_columnconfigure(0, weight=1)
+        self.master.grid_rowconfigure(1, weight=1)
+        self.master.grid_columnconfigure(0, weight=1)
 
-        self.regular_area_button = ttk.Button(self, text="Regular Area Farm", command=self.on_regular_area_button_click)
-        self.regular_area_button.grid(pady=25)
+        self.valhalla_farm_button = ttk.Button(self.master, text="Valhalla Farm", command=self.on_valhalla_farm_button_click)
+        self.regular_area_button = ttk.Button(self.master, text="Regular Area Farm", command=self.on_regular_area_button_click)
+
+        self.valhalla_farm_button.grid(row=0, column=0, pady=25)
+        self.regular_area_button.grid(row=1, column=0)
 
 
     def on_valhalla_farm_button_click(self):
         self.master.destroy()
         root = tk.Tk()
-        root.grid_rowconfigure(0, weight=1)
-        root.grid_columnconfigure(0, weight=1)
         app = ValhallaFarm(master=root)
-
         ## STYLE USING TKINTER TTK
         set_style()
         
@@ -57,10 +56,7 @@ class MainMenu(tk.Frame):
     def on_regular_area_button_click(self):
         self.master.destroy()
         root = tk.Tk()
-        root.grid_rowconfigure(0, weight=1)
-        root.grid_columnconfigure(0, weight=1)
         app = StandardAreaFarm(master=root)
-
         ## STYLE USING TKINTER TTK
         set_style()
         
@@ -72,15 +68,11 @@ class ValhallaFarm(tk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("Pockie Ninja Bot - Valhalla Farm")
-        self.master.geometry(STANDARD_WINDOW_SIZE)
+        self.master.geometry(VALHALLA_FARM_WINDOW_SIZE)
         self.master.resizable(False, False)
-        self.grid(row=0, column=0, sticky="NESW")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
         self.create_widgets()
         self.bots = []
         self.threads = []
-        self.bot = False
         center(self.master)
 
     
@@ -101,66 +93,48 @@ class ValhallaFarm(tk.Frame):
 
 
     def create_widgets(self):
-        self.username_label = ttk.Label(self, text="Username")
-        self.username_label.grid()
-        self.username_entry = ttk.Entry(self)
-        self.username_entry.grid()
-
-        self.password_label = ttk.Label(self, text="Password")
-        self.password_label.grid()
-        self.password_entry = ttk.Entry(self, show="*")
-        self.password_entry.grid()
-
-
+        self.username_label = ttk.Label(self.master, text="Username:")
+        self.username_entry = ttk.Entry(self.master)
+        self.password_label = ttk.Label(self.master, text="Password:")
+        self.password_entry = ttk.Entry(self.master, show="*")
         ## SET DUNGEON LEVEL AS A OPTION MENU
         self.dungeon_level_options = [VALHALLA_LVL_11, VALHALLA_LVL_16]
-        self.dungeon_lvl_label = ttk.Label(self, text="Dungeon Level")
-        self.dungeon_lvl_label.grid()
-
+        self.dungeon_lvl_label = ttk.Label(self.master, text="Dungeon Level:")
         self.dungeon_lvl_str_var = tk.StringVar()
         self.dungeon_lvl_str_var.set(self.dungeon_level_options[0])
-        self.dungeon_lvl_option_menu = tk.OptionMenu(self , self.dungeon_lvl_str_var , *self.dungeon_level_options, command=self.update_difficulties)
-        self.dungeon_lvl_option_menu.grid(pady=10)
-
-
+        self.dungeon_lvl_option_menu = tk.OptionMenu(self.master, self.dungeon_lvl_str_var , *self.dungeon_level_options, command=self.update_difficulties)
         ## DIFFICULTY OPTION MENU
         self.difficulty_options = [SOLO_VALHALLA_DIFFICULTY]
-        self.difficulty_option_label = ttk.Label(self, text="Choose difficulty")
-        self.difficulty_option_label.grid()
-
+        self.difficulty_option_label = ttk.Label(self.master, text="Choose difficulty:")
         self.difficulty_str_var = tk.StringVar()
         self.difficulty_str_var.set(self.difficulty_options[0])
-        self.difficulty_option_menu = tk.OptionMenu(self , self.difficulty_str_var , *self.difficulty_options)
-        self.difficulty_option_menu.grid(pady=10)
-
-
+        self.difficulty_option_menu = tk.OptionMenu(self.master, self.difficulty_str_var , *self.difficulty_options)
         ## ADD A CHECKBOX IF YOU WANT TO RUN THE BOT IN HEADLESS MODE
         self.headless_var = tk.IntVar()
-        self.headless_checkbox = ttk.Checkbutton(self, text="Headless (No Browser)", variable=self.headless_var)
-        self.headless_checkbox.grid(pady=10)
+        self.headless_label = ttk.Label(self.master, text="Headless (No Browser):")
+        self.headless_checkbox = ttk.Checkbutton(self.master, variable=self.headless_var)
+        self.start_button = ttk.Button(self.master, text="Start", command=self.on_start_button_click)
+        self.back_to_main_menu_button = ttk.Button(self.master, text="Back to Main Menu", command=self.back_to_main_menu)
 
-        self.start_button = ttk.Button(self, text="Start", command=self.on_start_button_click)
-        self.start_button.grid(pady=15)
-        
-        self.stop_button = ttk.Button(self, text="Stop", command=self.stop_bot)
-        self.stop_button.grid(pady=15)
-
-        self.back_to_main_menu_button = ttk.Button(self, text="Back to Main Menu", command=self.back_to_main_menu)
-        self.back_to_main_menu_button.grid(pady=15)
+        self.username_label.grid(row=0, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.username_entry.grid(row=0, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.password_label.grid(row=1, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.password_entry.grid(row=1, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.dungeon_lvl_label.grid(row=2, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.dungeon_lvl_option_menu.grid(row=2, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.difficulty_option_label.grid(row=3, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.difficulty_option_menu.grid(row=3, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.headless_label.grid(row=4, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.headless_checkbox.grid(row=4, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.start_button.grid(row=5, column=0, pady=STANDARD_PADDING_Y)
+        self.back_to_main_menu_button.grid(row=5, column=1, pady=STANDARD_PADDING_Y)
 
 
     def back_to_main_menu(self):
         self.master.destroy()
         root = tk.Tk()
-        root.grid_rowconfigure(0, weight=1)
-        root.grid_columnconfigure(0, weight=1)
         app = MainMenu(master=root)
-
-        ## STYLE USING TKINTER TTK
-        style = ttk.Style()
-        style.theme_use("vista")
-        style.configure("TButton", padding=6, relief="flat", background="#ccc")
-        
+        set_style()
         app.mainloop()
 
 
@@ -208,16 +182,6 @@ class ValhallaFarm(tk.Frame):
         self.bots.append(bot)
         check_exit_success = bot.main_loop()
         return check_exit_success
-    
-    
-    def stop_bot(self):
-        if self.bots:
-            messagebox.showinfo("Info", "Stopping Bot(s)!")
-            for bot in self.bots:
-                bot.quit()
-            self.bots = []
-        else:
-            messagebox.showwarning("Warning", "No Bot is not running!")
 
 
 class StandardAreaFarm(tk.Frame):
@@ -267,62 +231,48 @@ class StandardAreaFarm(tk.Frame):
 
     def create_widgets(self):
         self.username_label = ttk.Label(self, text="Username")
-        self.username_label.grid()
         self.username_entry = ttk.Entry(self)
-        self.username_entry.grid()
-
         self.password_label = ttk.Label(self, text="Password")
-        self.password_label.grid()
         self.password_entry = ttk.Entry(self, show="*")
-        self.password_entry.grid()
-
-
         ## AREA NAMES DROPDOWN MENU
         area_options = self.populate_area_names()
         self.area_option_label = ttk.Label(self, text="Choose Area")
-        self.area_option_label.grid()
-
         self.area_name_str_var = tk.StringVar()
         self.area_name_str_var.set(area_options[0])
         self.area_name_option_menu = tk.OptionMenu(self , self.area_name_str_var , *area_options, command=self.update_mob_names)
-        self.area_name_option_menu.grid(pady=10)
-
-
         ## MOB NAMES DROPDOWN MENU
         mobs_options = self.populate_mob_names()
         self.mob_option_label = ttk.Label(self, text="Choose Mob")
-        self.mob_option_label.grid()
-
         self.mob_name_str_var = tk.StringVar()
         self.mob_name_str_var.set(mobs_options[0])
         self.mob_name_option_menu = tk.OptionMenu(self , self.mob_name_str_var , *mobs_options)
-        self.mob_name_option_menu.grid(pady=10)
-
         ## ADD A CHECKBOX IF YOU WANT TO RUN THE BOT IN HEADLESS MODE
         self.headless_var = tk.IntVar()
-        self.headless_checkbox = ttk.Checkbutton(self, text="Headless (No Browser)", variable=self.headless_var)
-        self.headless_checkbox.grid(pady=10)
-
+        self.headless_label = ttk.Label(self, text="Headless (No Browser):")
+        self.headless_checkbox = ttk.Checkbutton(self, variable=self.headless_var)
         self.start_button = ttk.Button(self, text="Start", command=self.on_start_button_click)
-        self.start_button.grid(pady=15)
-        
-        self.stop_button = ttk.Button(self, text="Stop", command=self.stop_bot)
-        self.stop_button.grid(pady=15)
-
         self.back_to_main_menu_button = ttk.Button(self, text="Back to Main Menu", command=self.back_to_main_menu)
-        self.back_to_main_menu_button.grid(pady=15)
+
+
+        self.username_label.grid(row=0, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.username_entry.grid(row=0, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.password_label.grid(row=1, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.password_entry.grid(row=1, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.area_option_label.grid(row=2, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.area_name_option_menu.grid(row=2, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.mob_option_label.grid(row=3, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.mob_name_option_menu.grid(row=3, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.headless_label.grid(row=4, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.headless_checkbox.grid(row=4, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
+        self.start_button.grid(row=5, column=0, pady=STANDARD_PADDING_Y)
+        self.back_to_main_menu_button.grid(row=5, column=1, pady=STANDARD_PADDING_Y)
 
 
     def back_to_main_menu(self):
         self.master.destroy()
         root = tk.Tk()
-        root.grid_rowconfigure(0, weight=1)
-        root.grid_columnconfigure(0, weight=1)
         app = MainMenu(master=root)
-
-        ## STYLE USING TKINTER TTK
         set_style()
-        
         app.mainloop()
 
 
@@ -371,29 +321,11 @@ class StandardAreaFarm(tk.Frame):
         check_exit_success = bot.main_loop()
         return check_exit_success
 
-    
-    def stop_bot(self):
-        if self.bots:
-            messagebox.showinfo("Info", "Stopping Bot(s)!")
-            for bot in self.bots:
-                bot.quit()
-            self.bots = []
-        else:
-            messagebox.showwarning("Warning", "No Bot is not running!")
-
-
 def center(toplevel):
     toplevel.update_idletasks()
     # Tkinter way to find the screen resolution
-    # screen_width = toplevel.winfo_screenwidth()
-    # screen_height = toplevel.winfo_screenheight()
-
-    # PyQt way to find the screen resolution
-    app = QApplication([])
-    screen_width = app.desktop().screenGeometry().width()
-    screen_height = app.desktop().screenGeometry().height()
-    app.quit()
-
+    screen_width = toplevel.winfo_screenwidth()
+    screen_height = toplevel.winfo_screenheight()
     size = tuple(int(_) for _ in toplevel.geometry().split('+')[0].split('x'))
     x = screen_width/2 - size[0]/2
     y = screen_height/2 - size[1]/2
@@ -403,15 +335,8 @@ def center(toplevel):
 
 def rebuild():
     root = tk.Tk()
-    root.grid_rowconfigure(0, weight=1)
-    root.grid_columnconfigure(0, weight=1)
     app = MainMenu(master=root)
-
-    ## STYLE USING TKINTER TTK
-    style = ttk.Style()
-    style.theme_use("vista")
-    style.configure("TButton", padding=6, relief="flat", background="#ccc")
-    
+    set_style()
     app.mainloop()
 
 

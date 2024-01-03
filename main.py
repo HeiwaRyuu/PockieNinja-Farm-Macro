@@ -200,34 +200,27 @@ class StandardAreaFarm(tk.Frame):
         self.bot = False
         center(self.master)
 
-
     def populate_area_names(self):
         area_names = [SMELTING_MOUNTAINS_AREA_NAME, EVENTIDE_BARRENS_AREA_NAME]
         return area_names
 
-
     def populate_mob_names(self):
-        options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME] # , DEMON_BRUTE_NAME
+        options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME, DEMON_BRUTE_NAME] # , DEMON_BRUTE_NAME
         return options
-    
     
     def update_mob_names(self, *args):
         # Reset var and delete all old options
         self.mob_name_str_var.set('')
         self.mob_name_option_menu['menu'].delete(0, 'end')
-
         area_name = self.area_name_option_menu.cget("text")
-
         if area_name == SMELTING_MOUNTAINS_AREA_NAME:
-            options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME] # , DEMON_BRUTE_NAME
+            options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME, DEMON_BRUTE_NAME] # , DEMON_BRUTE_NAME
         elif area_name == EVENTIDE_BARRENS_AREA_NAME:
-            options = [POTATO_NAME, MONKEY_NAME, MEAL_NAME, KAPPA_NAME, BULLHEAD_NAME] # , PLAGUE_DEMON_NAME
-
+            options = [POTATO_NAME, MONKEY_NAME, MEAL_NAME, KAPPA_NAME, BULLHEAD_NAME, PLAGUE_DEMON_NAME] # , PLAGUE_DEMON_NAME
         # Insert list of new options (tk._setit hooks them up to var)
         for option in options:
             self.mob_name_option_menu['menu'].add_command(label=option, command=tk._setit(self.mob_name_str_var, option))
         self.mob_name_str_var.set(options[0])
-
 
     def create_widgets(self):
         self.username_label = ttk.Label(self, text="Username")
@@ -253,7 +246,6 @@ class StandardAreaFarm(tk.Frame):
         self.start_button = ttk.Button(self, text="Start", command=self.on_start_button_click)
         self.back_to_main_menu_button = ttk.Button(self, text="Back to Main Menu", command=self.back_to_main_menu)
 
-
         self.username_label.grid(row=0, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
         self.username_entry.grid(row=0, column=1, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
         self.password_label.grid(row=1, column=0, sticky="w", padx=STANDARD_PADDING_X, pady=STANDARD_PADDING_Y)
@@ -267,7 +259,6 @@ class StandardAreaFarm(tk.Frame):
         self.start_button.grid(row=5, column=0, pady=STANDARD_PADDING_Y)
         self.back_to_main_menu_button.grid(row=5, column=1, pady=STANDARD_PADDING_Y)
 
-
     def back_to_main_menu(self):
         self.master.destroy()
         root = tk.Tk()
@@ -275,12 +266,10 @@ class StandardAreaFarm(tk.Frame):
         set_style()
         app.mainloop()
 
-
     def on_start_button_click(self):
         new_thread = threading.Thread(target=self.start_bot, daemon=True)
         self.threads.append(new_thread)
         new_thread.start()
-
 
     def start_bot(self):
         username = self.username_entry.get()
@@ -288,12 +277,10 @@ class StandardAreaFarm(tk.Frame):
         area_name = self.area_name_option_menu.cget("text")
         mob_name = self.mob_name_option_menu.cget("text")
         headless = self.headless_var.get()
-
         if headless == 1:
             headless = True
         else:
             headless = False
-
         if username == "" or password == "" or mob_name == "":
             messagebox.showwarning("Warning", "Please fill all the fields")
         else:
@@ -308,12 +295,10 @@ class StandardAreaFarm(tk.Frame):
                 if case == 'password':
                     messagebox.showwarning("Warning", "Invalid Credentials!\nPassword is incorrect!")
                 return
-            
             messagebox.showinfo("Info", "Valid Credentials!\nStarting Bot!")
             check_exit_success = self.create_and_run_bot(username, password, area_name, mob_name, headless)
             while not check_exit_success:
                 check_exit_success = self.create_and_run_bot(username, password, area_name, mob_name, headless)
-
 
     def create_and_run_bot(self, username, password, area_name, mob_name, headless):
         bot = PockieNinjaStandardAreaFarm(username, password, area_name, mob_name, headless=headless)
@@ -329,16 +314,13 @@ def center(toplevel):
     size = tuple(int(_) for _ in toplevel.geometry().split('+')[0].split('x'))
     x = screen_width/2 - size[0]/2
     y = screen_height/2 - size[1]/2
-
     toplevel.geometry("+%d+%d" % (x, y))
-
 
 def rebuild():
     root = tk.Tk()
     app = MainMenu(master=root)
     set_style()
     app.mainloop()
-
 
 if __name__ == "__main__":
     rebuild()

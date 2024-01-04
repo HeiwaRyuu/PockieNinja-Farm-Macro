@@ -266,7 +266,7 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
             self.mob_3_name = SCARLET_NAME
             self.mob_4_name = WARRIOR_OF_DARKNESS_NAME
             self.mob_5_name = DEMON_BRUTE_NAME
-            self.boss_ticket = BOSS_TICKET_LVL_10
+            self.boss_ticket = BOSS_TICKET_PNG
             self.boss_lvl = 10
             
         elif self.area_name == EVENTIDE_BARRENS_AREA_NAME:
@@ -285,8 +285,27 @@ class PockieNinjaStandardAreaFarm(PockieNinjaFarmBot):
             self.mob_3_name = KAPPA_NAME
             self.mob_4_name = BULLHEAD_NAME
             self.mob_5_name = PLAGUE_DEMON_NAME
-            self.boss_ticket = BOSS_TICKET_LVL_20
+            self.boss_ticket = BOSS_TICKET_PNG
             self.boss_lvl = 20
+        
+        elif self.area_name == CROSSROADS_AREA_NAME:
+            self.width_multiplier = CROSSROADS_WIDTH_MULTIPLIER
+            self.height_multiplier = CROSSROADS_HEIGHT_MULTIPLIER
+            self.bg_src = CROSSROADS_BG_SRC
+            self.mob_0_icon_src = TREE_ENT_ICON_SRC
+            self.mob_1_icon_src = MAN_EATER_ICON_SRC
+            self.mob_2_icon_src = LONGFEATHER_DEMON_ICON_SRC
+            self.mob_3_icon_src = CHEVALIER_DEMON_ICON_SRC
+            self.mob_4_icon_src = SHADOW_BAT_ICON_SRC
+            self.mob_5_icon_src = SOULENDER_ICON_SRC
+            self.mob_0_name = TREE_ENT_NAME
+            self.mob_1_name = MAN_EATER_NAME
+            self.mob_2_name = LONGFEATHER_DEMON_NAME
+            self.mob_3_name = CHEVALIER_DEMON_NAME
+            self.mob_4_name = SHADOW_BAT_NAME
+            self.mob_5_name = SOULENDER_NAME
+            self.boss_ticket = BOSS_TICKET_PNG
+            self.boss_lvl = 25
 
     def main_loop(self):
         try:

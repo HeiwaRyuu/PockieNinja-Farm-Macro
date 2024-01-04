@@ -9,18 +9,16 @@ MAP_CANVAS="canvas[width='768']"
 GO_TO_VILLAGE_ELEMENT=""
 MAX_TRIES=30
 
-
 ## PLAYER ITEMS
 PLAYER_BAG="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/features/bottom-menu/11-1.png'"
 BAG_SLOTS="class='tabbed_pane__tab_button'"
 MAX_BAG_SLOTS=12
-BOSS_TICKET_LVL_10="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/items/etc/51.png'"
-BOSS_TICKET_LVL_20=""
+BOSS_TICKET_PNG="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/items/etc/51.png'"
 
 ## SMELTING MOUNTAINS
 SMELTING_MOUNTAINS_AREA_NAME="Semelting Mountains"
-SMELTING_MOUNTAINS_WIDTH_MULTIPLIER=0.0872
-SMELTING_MOUNTAINS_HEIGHT_MULTIPLIER=0.798
+SMELTING_MOUNTAINS_WIDTH_MULTIPLIER=round(75/768, 3)
+SMELTING_MOUNTAINS_HEIGHT_MULTIPLIER=round(330/426, 3)
 SMELTING_MOUNTAINS_BG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/backgrounds/smelting_mountains.png'"
 SUNFLOWER_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10076.png'"
 BEE_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10065.png'"
@@ -35,12 +33,11 @@ SCARLET_NAME="Scarlet (lvl 8)"
 WARRIOR_OF_DARKNESS_NAME="Warrior of Darkness (lvl 10)"
 DEMON_BRUTE_NAME="Demon Brute (BOSS)"
 
-
 ## EVENTIDE BARRENS
 EVENTIDE_BARRENS_AREA_NAME="Eventide Barrens"
-EVENTIDE_BARRENS_WIDTH_MULTIPLIER=0.162
-EVENTIDE_BARRENS_HEIGHT_MULTIPLIER=0.705
-EVENTIDE_BARRENS_BG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/backgrounds/eventide_barrens.png'"
+EVENTIDE_BARRENS_WIDTH_MULTIPLIER=round(125/768, 3)
+EVENTIDE_BARRENS_HEIGHT_MULTIPLIER=round(293/426, 3)
+EVENTIDE_BARRENS_BG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/backgrounds/2102.png'"
 POTATO_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10077.png'"
 MONKEY_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10067.png'"
 MEAL_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10086.png'"
@@ -54,10 +51,27 @@ KAPPA_NAME="Kappa (lvl 18)"
 BULLHEAD_NAME="Bullhead (lvl 20)"
 PLAGUE_DEMON_NAME="Plague Demon (BOSS)"
 
+## CROSSROADS
+CROSSROADS_AREA_NAME="Crossroads"
+CROSSROADS_WIDTH_MULTIPLIER=round(330/768, 3)
+CROSSROADS_HEIGHT_MULTIPLIER=round(230/426, 3)
+CROSSROADS_BG_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/backgrounds/2601.png'"
+TREE_ENT_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10075.png'"
+MAN_EATER_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10074.png'"
+LONGFEATHER_DEMON_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10016.png'"
+CHEVALIER_DEMON_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10021.png'"
+SHADOW_BAT_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10006.png'"
+SOULENDER_ICON_SRC="id='npc-container-10015'"
+TREE_ENT_NAME="Tree Ent (lvl 17)"
+MAN_EATER_NAME="Man-Eater (lvl 19)"
+LONGFEATHER_DEMON_NAME="Longfeather Demon (lvl 21)"
+CHEVALIER_DEMON_NAME="Chevalier Demon (lvl 23)"
+SHADOW_BAT_NAME="Shadow Bat (lvl 25)"
+SOULENDER_NAME="Soulender (BOSS)"
+
 
 ## DEMON CITY
 DEMON_CITY_HEIGHT_MULTIPLIER=0.2
-
 
 ## VALHALLA
 VALLHALLA_ENCAMPMENT="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/village/demon/valhalla.png'"
@@ -67,14 +81,12 @@ SOLO_VALHALLA_DIFFICULTY="Solo"
 VALHALLA_LVL_11="11"
 VALHALLA_LVL_16="16"
 
-
 ## DUNGEON LVL 11
 DECADENT_NEST_CASTLE_MENU_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/buildings/0.png'"
 DECADENT_NEST_DIFFICULTY_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/select.png'"
 DECADENT_NEST_BATTLE_INSTANCE_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/dungeons/0/0.png'"
 DECADENT_NEST_BATTLE_ICON_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/icons/monsters/10005.png'"
 DECADENT_NEST_FIGHT_NUM=5
-
 
 ## DUNGEON LVL 16
 VALHALLA_CAMP_CASTLE_MENU_SRC="src='https://pockie-ninja-assets.sfo3.cdn.digitaloceanspaces.com/pockie-ninja-assets/public/scenes/valhalla/buildings/1.png'"

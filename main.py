@@ -201,11 +201,11 @@ class StandardAreaFarm(tk.Frame):
         center(self.master)
 
     def populate_area_names(self):
-        area_names = [SMELTING_MOUNTAINS_AREA_NAME, EVENTIDE_BARRENS_AREA_NAME]
+        area_names = [SMELTING_MOUNTAINS_AREA_NAME, EVENTIDE_BARRENS_AREA_NAME, CROSSROADS_AREA_NAME]
         return area_names
 
     def populate_mob_names(self):
-        options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME, DEMON_BRUTE_NAME] # , DEMON_BRUTE_NAME
+        options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME] # , DEMON_BRUTE_NAME
         return options
     
     def update_mob_names(self, *args):
@@ -214,9 +214,11 @@ class StandardAreaFarm(tk.Frame):
         self.mob_name_option_menu['menu'].delete(0, 'end')
         area_name = self.area_name_option_menu.cget("text")
         if area_name == SMELTING_MOUNTAINS_AREA_NAME:
-            options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME, DEMON_BRUTE_NAME] # , DEMON_BRUTE_NAME
+            options = [SUNFLOWER_NAME, BEE_NAME, SUSHI_NAME, SCARLET_NAME, WARRIOR_OF_DARKNESS_NAME] # , DEMON_BRUTE_NAME
         elif area_name == EVENTIDE_BARRENS_AREA_NAME:
-            options = [POTATO_NAME, MONKEY_NAME, MEAL_NAME, KAPPA_NAME, BULLHEAD_NAME, PLAGUE_DEMON_NAME] # , PLAGUE_DEMON_NAME
+            options = [POTATO_NAME, MONKEY_NAME, MEAL_NAME, KAPPA_NAME, BULLHEAD_NAME] # , PLAGUE_DEMON_NAME
+        elif area_name == CROSSROADS_AREA_NAME:
+            options = [TREE_ENT_NAME, MAN_EATER_NAME, LONGFEATHER_DEMON_NAME, CHEVALIER_DEMON_NAME, SHADOW_BAT_NAME,] # SOULENDER_NAME
         # Insert list of new options (tk._setit hooks them up to var)
         for option in options:
             self.mob_name_option_menu['menu'].add_command(label=option, command=tk._setit(self.mob_name_str_var, option))
